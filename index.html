@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI 8 Terminal | Live Dashboard</title>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <style>
+        /* THE STYLING (Dark Mode Quant Terminal) */
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --green: #3fb950;
+            --red: #f85149;
+            --border: #30363d;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+        .status-badge {
+            background-color: var(--border);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Scoreboard Section */
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .green { color: var(--green); }
+        .red { color: var(--red); }
+
+        /* Chart Section */
+        #chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 10px;
+        }
+
+        /* Constituents Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="panel">
+        <div class="header">
+            <h1>[ 🟢 LIVE ] MPI 8 TERMINAL</h1>
+            <div class="status-badge" id="ui-time">Loading Time...</div>
+        </div>
+        
+        <div class="scoreboard">
+            <div>
+                <div class="metric-title">Index Points</div>
+                <div class="metric-value" id="ui-points">----.--</div>
+            </div>
+            <div>
+                <div class="metric-title">Net Change</div>
+                <div class="metric-value" id="ui-change">--.--</div>
+            </div>
+            <div>
+                <div class="metric-title">Daily High / Low</div>
+                <div class="metric-value" style="font-size: 1.2rem; margin-top: 5px;">
+                    <span id="ui-high">----.--</span> | <span id="ui-low">----.--</span>
+                </div>
+            </div>
+            <div>
+                <div class="metric-title">Status</div>
+                <div class="metric-value" id="ui-status" style="font-size: 1.2rem; margin-top: 5px;">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="metric-title" style="margin-bottom: 10px;">Intraday Performance (10-Min Ticks)</div>
+        <div id="chart-container"></div>
+    </div>
+
+    <div class="panel">
+        <div class="metric-title">Constituents Breakdown</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Price (MMK)</th>
+                    <th>Weight (%)</th>
+                    <th>Trend (Change)</th>
+                </tr>
+            </thead>
+            <tbody id="ui-table-body">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // THE ENGINE (Vanilla JavaScript)
+    
+    // 1. Configuration
+    const API_URL = 'https://raw.githubusercontent.com/PizzaGuy-coder/mpi8-terminal/main/api.json';
+    
+    // 2. Initialize TradingView Chart
+    const chartContainer = document.getElementById('chart-container');
+    const chart = LightweightCharts.createChart(chartContainer, {
+        width: chartContainer.clientWidth,
+        height: 400,
+        layout: {
+            background: { type: 'solid', color: '#161b22' },
+            textColor: '#c9d1d9',
+        },
+        grid: {
+            vertLines: { color: '#30363d' },
+            horzLines: { color: '#30363d' },
+        },
+        timeScale: {
+            timeVisible: true,
+            secondsVisible: false,
+        }
+    });
+    
+    // Create the line series for our index points
+    const lineSeries = chart.addLineSeries({
+        color: '#3fb950',
+        lineWidth: 2,
+    });
+
+    // Handle window resizing to keep chart responsive
+    window.addEventListener('resize', () => {
+        chart.resize(chartContainer.clientWidth, 400);
+    });
+
+    // 3. The Fetch Loop (Pulls Data & Updates UI securely)
+    async function fetchAndUpdateTerminal() {
+        try {
+            const response = await fetch(API_URL, { cache: 'no-store' }); // bypass browser cache
+            if (!response.ok) throw new Error("Failed to fetch API");
+            const data = await response.json();
+
+            // UPDATE METADATA (Safe textContent prevents XSS)
+            document.getElementById('ui-time').textContent = data.system_metadata.last_updated_mmt;
+            document.getElementById('ui-status').textContent = data.system_metadata.market_status;
+
+            // UPDATE SCOREBOARD
+            const points = data.index_metrics.current_points.toFixed(2);
+            const netChange = data.index_metrics.net_change;
+            const percentChange = data.index_metrics.percentage_change;
+
+            document.getElementById('ui-points').textContent = points;
+            document.getElementById('ui-high').textContent = data.index_metrics.daily_high.toFixed(2);
+            document.getElementById('ui-low').textContent = data.index_metrics.daily_low.toFixed(2);
+            
+            const changeEl = document.getElementById('ui-change');
+            changeEl.textContent = `${netChange > 0 ? '+' : ''}${netChange.toFixed(2)} (${percentChange})`;
+            changeEl.className = 'metric-value ' + (netChange >= 0 ? 'green' : 'red');
+
+            // UPDATE CHART
+            // Convert custom time string "YYYY-MM-DD HH:MM" to Unix timestamp required by TradingView
+            const chartData = data.intraday_history.map(tick => {
+                // Formatting time string to a standard ISO format to parse safely in JS (+06:30 for MMT)
+                const parsedDate = new Date(tick.time.replace(" ", "T") + "+06:30"); 
+                return {
+                    time: parsedDate.getTime() / 1000, 
+                    value: tick.close
+                };
+            });
+            lineSeries.setData(chartData);
+
+            // UPDATE CONSTITUENTS TABLE
+            const tableBody = document.getElementById('ui-table-body');
+            tableBody.innerHTML = ''; // Clear old rows
+            
+            data.constituents.forEach(stock => {
+                const row = document.createElement('tr');
+                
+                // Determine color for the trend
+                const changeColor = stock.change >= 0 ? 'green' : 'red';
+                const changeIcon = stock.change >= 0 ? '📈' : '🔻';
+
+                // Securely creating cells
+                row.innerHTML = `
+                    <td style="font-weight: bold; color: #ffffff;">${stock.ticker}</td>
+                    <td>${stock.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td>${stock.weight_percent.toFixed(2)}%</td>
+                    <td class="${changeColor}">${changeIcon} ${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            console.log("Terminal successfully updated:", new Date().toLocaleTimeString());
+
+        } catch (error) {
+            console.error("Terminal Error:", error);
+        }
+    }
+
+    // 4. Start the Engine
+    fetchAndUpdateTerminal(); // Run immediately on load
+    setInterval(fetchAndUpdateTerminal, 60000); // Check for updates every 60 seconds
+</script>
+
+</body>
+</html>
