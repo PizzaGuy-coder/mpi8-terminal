@@ -2,13 +2,14 @@
 """
 MPI 8 Index Engine - Cloud Deployment Edition
 Description: Autonomous single-fire data generation block for MPI 8.
-             Optimized to run inside GitHub Actions serverless containers.
+             Features: Safe-write backups, dynamic market trend analysis, 
+             and standardized 1,000-point baselining.
 """
 
 import os
-import sys
 import json
 import random
+import shutil
 from datetime import datetime, timedelta, timezone
 import requests
 from bs4 import BeautifulSoup
@@ -20,24 +21,33 @@ MAX_INTRADAY_POINTS = 50
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "api.json")
+BACKUP_FILE = os.path.join(SCRIPT_DIR, "api_backup.json") # NEW: Data corruption shield
 
 CONSTITUENT_SHARES = {
     "FMI": 27112747, "MTSH": 38929150, "MCB": 10400986, "FPB": 2472053,
     "TMH": 12213224, "EFR": 48740248, "AMATA": 10000000, "MAEX": 24561164
 }
-INDEX_BASE_DIVISOR = 720000
+
+# UPDATED: Massive divisor to force the index baseline down to exactly ~1,000 points
+INDEX_BASE_DIVISOR = 645241392.0 
+
 BASELINE_PRICES = {
     "FMI": 8500.0, "MTSH": 2900.0, "MCB": 7800.0, "FPB": 1600.0,
     "TMH": 2400.0, "EFR": 1950.0, "AMATA": 4800.0, "MAEX": 1800.0
 }
 
 def check_market_hours():
+    # Locked to Myanmar Time (MMT)
     mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
     if mmt_now.weekday() >= 5:
         return False, "Market Closed (Weekend)"
+    
     market_start = mmt_now.replace(hour=9, minute=30, second=0, microsecond=0)
     market_end = mmt_now.replace(hour=13, minute=30, second=0, microsecond=0)
-    return (market_start <= mmt_now <= market_end), "Market Open" if (market_start <= mmt_now <= market_end) else "Market Closed (Outside Hours)"
+    
+    if market_start <= mmt_now <= market_end:
+        return True, "Market Open (Live Trading)"
+    return False, "Market Closed (Outside Hours)"
 
 def scrape_ysx():
     headers = {"User-Agent": USER_AGENT}
@@ -62,8 +72,10 @@ def scrape_ysx():
         return None
 
 def load_existing_state():
+    # NEW: Safety system. If api.json exists, back it up before reading/writing.
     if os.path.exists(OUTPUT_FILE):
         try:
+            shutil.copy(OUTPUT_FILE, BACKUP_FILE)
             with open(OUTPUT_FILE, "r") as f:
                 state = json.load(f)
                 return state.get("intraday_history", []), state.get("daily_candle_history", []), {c["ticker"]: c["price"] for c in state.get("constituents", [])}
@@ -92,6 +104,7 @@ def compile_api():
     else:
         data_source = "Scraped Live (YSX)"
 
+    # --- MATH ENGINE ---
     total_market_cap = sum(price * CONSTITUENT_SHARES[ticker] for ticker, price in final_prices.items())
     index_points = round(total_market_cap / INDEX_BASE_DIVISOR, 2)
     
@@ -111,9 +124,11 @@ def compile_api():
     intra_open = intraday_hist[-1]["close"] if intraday_hist else index_points
     new_intra = {
         "time": current_time_str, "open": round(intra_open, 2),
-        "high": round(max(intra_open, index_points) + (0.2 if is_simulated else 0), 2),
-        "low": round(min(intra_open, index_points) - (0.2 if is_simulated else 0), 2), "close": round(index_points, 2)
+        "high": round(max(intra_open, index_points) + (0.02 if is_simulated else 0), 2),
+        "low": round(min(intra_open, index_points) - (0.02 if is_simulated else 0), 2), 
+        "close": round(index_points, 2)
     }
+    
     if intraday_hist and intraday_hist[-1]["time"] == current_time_str:
         intraday_hist[-1] = new_intra
     else:
@@ -128,22 +143,44 @@ def compile_api():
     else:
         daily_hist.append({"date": current_date_str, "open": index_points, "high": index_points, "low": index_points, "close": index_points})
 
+    # NEW: Advanced Analytics
+    net_change = round(intraday_hist[-1]["close"] - intraday_hist[0]["open"], 2)
+    
+    if intraday_hist[0]['open'] != 0:
+        percent_change = round((net_change / intraday_hist[0]['open']) * 100, 2)
+    else:
+        percent_change = 0.0
+        
+    if net_change > 0:
+        market_sentiment = "Bullish 📈"
+    elif net_change < 0:
+        market_sentiment = "Bearish 📉"
+    else:
+        market_sentiment = "Neutral ⚖️"
+
+    # --- API COMPILATION ---
     api_payload = {
         "system_metadata": {
-            "index_ticker": "MPI 8", "index_name": "Myanmar's Public Index 8",
-            "data_source": data_source, "market_status": status_message,
+            "index_ticker": "MPI 8", 
+            "index_name": "Myanmar's Public Index 8",
+            "data_source": data_source, 
+            "market_status": status_message,
+            "market_sentiment": market_sentiment, # NEW: Algorithmic trend detection
             "last_updated_mmt": mmt_now.strftime("%Y-%m-%d %H:%M:%S MMT")
         },
         "index_metrics": {
             "current_points": index_points,
-            "net_change": round(intraday_hist[-1]["close"] - intraday_hist[0]["open"], 2),
-            "percentage_change": f"{round(((intraday_hist[-1]['close'] - intraday_hist[0]['open']) / intraday_hist[0]['open']) * 100, 2):+}%"
+            "net_change": net_change,
+            "percentage_change": f"{'+' if percent_change > 0 else ''}{percent_change}%",
+            "daily_high": daily_hist[-1]["high"], # NEW: Quick-grab metrics
+            "daily_low": daily_hist[-1]["low"]
         },
         "intraday_history": intraday_hist,
         "daily_candle_history": daily_hist,
         "constituents": constituents_payload
     }
 
+    # Safe Write
     with open(OUTPUT_FILE, "w") as f:
         json.dump(api_payload, f, indent=2)
 
