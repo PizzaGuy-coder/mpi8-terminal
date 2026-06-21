@@ -5,14 +5,14 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Closed (Weekend)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-21 15:01:02 MMT"
+    "last_updated_mmt": "2026-06-21 15:10:53 MMT"
   },
   "index_metrics": {
-    "current_points": 993.62,
-    "net_change": -5.63,
-    "percentage_change": "-0.56%",
+    "current_points": 993.24,
+    "net_change": -6.01,
+    "percentage_change": "-0.6%",
     "daily_high": 997.87,
-    "daily_low": 993.37
+    "daily_low": 993.24
   },
   "intraday_history": [
     {
@@ -175,6 +175,13 @@
       "high": 993.64,
       "low": 993.35,
       "close": 993.62
+    },
+    {
+      "time": "2026-06-21 15:10",
+      "open": 993.62,
+      "high": 993.64,
+      "low": 993.22,
+      "close": 993.24
     }
   ],
   "daily_candle_history": [
@@ -189,58 +196,58 @@
       "date": "2026-06-21",
       "open": 997.77,
       "high": 997.87,
-      "low": 993.37,
-      "close": 993.62
+      "low": 993.24,
+      "close": 993.24
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 8491.87,
-      "weight_percent": 35.91,
-      "change": -0.2
+      "price": 8494.18,
+      "weight_percent": 35.93,
+      "change": 0.38
     },
     {
       "ticker": "MTSH",
-      "price": 2867.94,
-      "weight_percent": 17.41,
-      "change": -0.03
+      "price": 2868.9,
+      "weight_percent": 17.43,
+      "change": 0.3
     },
     {
       "ticker": "MCB",
-      "price": 7739.6,
-      "weight_percent": 12.56,
-      "change": 0.22
+      "price": 7725.19,
+      "weight_percent": 12.54,
+      "change": -0.38
     },
     {
       "ticker": "FPB",
-      "price": 1614.56,
+      "price": 1612.87,
       "weight_percent": 0.62,
-      "change": 0.19
+      "change": 1.06
     },
     {
       "ticker": "TMH",
-      "price": 2380.18,
+      "price": 2377.09,
       "weight_percent": 4.53,
-      "change": -0.41
+      "change": 0.87
     },
     {
       "ticker": "EFR",
-      "price": 1924.13,
+      "price": 1923.47,
       "weight_percent": 14.63,
-      "change": -0.79
+      "change": 0.85
     },
     {
       "ticker": "AMATA",
-      "price": 4782.51,
-      "weight_percent": 7.46,
-      "change": 1.01
+      "price": 4773.3,
+      "weight_percent": 7.45,
+      "change": 0.72
     },
     {
       "ticker": "MAEX",
-      "price": 1794.29,
+      "price": 1793.3,
       "weight_percent": 6.87,
-      "change": 0.16
+      "change": -1.09
     }
   ]
 }
