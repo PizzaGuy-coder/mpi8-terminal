@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MPI 8 Terminal | Live Dashboard</title>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
     
     <style>
-        /* THE STYLING (Dark Mode Quant Terminal) */
         :root {
             --bg-color: #0d1117;
             --panel-bg: #161b22;
@@ -16,99 +15,33 @@
             --green: #3fb950;
             --red: #f85149;
             --border: #30363d;
+            --active-bg: #1f6feb;
             --font-mono: 'Consolas', 'Courier New', monospace;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-mono);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .panel {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        /* Header Section */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #ffffff;
-        }
-        .status-badge {
-            background-color: var(--border);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        /* Scoreboard Section */
-        .scoreboard {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            text-align: center;
-        }
-        .metric-title {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-mono); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px; }
+        .panel { background-color: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+        .header h1 { margin: 0; font-size: 1.5rem; color: #ffffff; }
+        .status-badge { background-color: var(--border); padding: 5px 10px; border-radius: 4px; font-size: 0.9rem; }
+        .scoreboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+        .metric-title { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 5px; }
+        .metric-value { font-size: 1.5rem; font-weight: bold; }
         .green { color: var(--green); }
         .red { color: var(--red); }
+        
+        /* NEW: Button Controls Styling */
+        .chart-controls { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .btn-group { display: flex; gap: 5px; }
+        .btn { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border); padding: 5px 12px; cursor: pointer; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85rem; transition: 0.2s; }
+        .btn:hover { background: #21262d; color: #ffffff; }
+        .btn.active { background: var(--active-bg); color: #ffffff; border-color: var(--active-bg); font-weight: bold; }
 
-        /* Chart Section */
-        #chart-container {
-            width: 100%;
-            height: 400px;
-            margin-top: 10px;
-        }
-
-        /* Constituents Table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        th {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
+        #chart-container { width: 100%; height: 400px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -117,156 +50,190 @@
     <div class="panel">
         <div class="header">
             <h1>[ 🟢 LIVE ] MPI 8 TERMINAL</h1>
-            <div class="status-badge" id="ui-time">Loading Time...</div>
+            <div class="status-badge" id="ui-time">Initializing...</div>
         </div>
         
         <div class="scoreboard">
-            <div>
-                <div class="metric-title">Index Points</div>
-                <div class="metric-value" id="ui-points">----.--</div>
-            </div>
-            <div>
-                <div class="metric-title">Net Change</div>
-                <div class="metric-value" id="ui-change">--.--</div>
-            </div>
-            <div>
-                <div class="metric-title">Daily High / Low</div>
-                <div class="metric-value" style="font-size: 1.2rem; margin-top: 5px;">
-                    <span id="ui-high">----.--</span> | <span id="ui-low">----.--</span>
-                </div>
-            </div>
-            <div>
-                <div class="metric-title">Status</div>
-                <div class="metric-value" id="ui-status" style="font-size: 1.2rem; margin-top: 5px;">Loading...</div>
-            </div>
+            <div><div class="metric-title">Index Points</div><div class="metric-value" id="ui-points">--.--</div></div>
+            <div><div class="metric-title">Net Change</div><div class="metric-value" id="ui-change">--.--</div></div>
+            <div><div class="metric-title">Daily High / Low</div><div class="metric-value" style="font-size: 1.2rem; margin-top: 5px;"><span id="ui-high">--.--</span> | <span id="ui-low">--.--</span></div></div>
+            <div><div class="metric-title">Status</div><div class="metric-value" id="ui-status" style="font-size: 1.2rem; margin-top: 5px;">Connecting...</div></div>
         </div>
     </div>
 
     <div class="panel">
-        <div class="metric-title" style="margin-bottom: 10px;">Intraday Performance (10-Min Ticks)</div>
+        <div class="chart-controls">
+            <div class="btn-group">
+                <button class="btn btn-tf active" id="btn-1D" onclick="setTimeframe('1D')">1D</button>
+                <button class="btn btn-tf" id="btn-1W" onclick="setTimeframe('1W')">1W</button>
+                <button class="btn btn-tf" id="btn-1M" onclick="setTimeframe('1M')">1M</button>
+                <button class="btn btn-tf" id="btn-6M" onclick="setTimeframe('6M')">6M</button>
+                <button class="btn btn-tf" id="btn-1Y" onclick="setTimeframe('1Y')">1Y</button>
+                <button class="btn btn-tf" id="btn-ALL" onclick="setTimeframe('ALL')">ALL</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-type active" id="btn-line" onclick="setChartType('line')">Line</button>
+                <button class="btn btn-type" id="btn-candle" onclick="setChartType('candle')">Candle</button>
+            </div>
+        </div>
         <div id="chart-container"></div>
     </div>
 
     <div class="panel">
         <div class="metric-title">Constituents Breakdown</div>
         <table>
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Price (MMK)</th>
-                    <th>Weight (%)</th>
-                    <th>Trend (Change)</th>
-                </tr>
-            </thead>
-            <tbody id="ui-table-body">
-                </tbody>
+            <thead><tr><th>Ticker</th><th>Price (MMK)</th><th>Weight (%)</th><th>Trend</th></tr></thead>
+            <tbody id="ui-table-body"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // THE ENGINE (Vanilla JavaScript)
+    const API_URL = 'api.json';
     
-    // 1. Configuration
-    const API_URL = 'https://raw.githubusercontent.com/PizzaGuy-coder/mpi8-terminal/main/api.json';
-    
-    // 2. Initialize TradingView Chart
+    // --- APP STATE MEMORY ---
+    let globalApiData = null; 
+    let currentSeries = null;
+    let currentChartType = 'line'; // Default to line
+    let currentTimeframe = '1D';   // Default to 1 Day
+
+    // --- CHART INITIALIZATION ---
     const chartContainer = document.getElementById('chart-container');
     const chart = LightweightCharts.createChart(chartContainer, {
-        width: chartContainer.clientWidth,
-        height: 400,
-        layout: {
-            background: { type: 'solid', color: '#161b22' },
-            textColor: '#c9d1d9',
-        },
-        grid: {
-            vertLines: { color: '#30363d' },
-            horzLines: { color: '#30363d' },
-        },
-        timeScale: {
-            timeVisible: true,
-            secondsVisible: false,
+        width: chartContainer.clientWidth, height: 400,
+        layout: { background: { type: 'solid', color: '#161b22' }, textColor: '#c9d1d9' },
+        grid: { vertLines: { color: '#30363d' }, horzLines: { color: '#30363d' } },
+        timeScale: { timeVisible: true, secondsVisible: false }
+    });
+    window.addEventListener('resize', () => chart.resize(chartContainer.clientWidth, 400));
+
+    // --- UI TOGGLE LOGIC ---
+    function setTimeframe(tf) {
+        currentTimeframe = tf;
+        document.querySelectorAll('.btn-tf').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + tf).classList.add('active');
+        renderChart(); // Redraw chart based on new timeframe
+    }
+
+    function setChartType(type) {
+        currentChartType = type;
+        document.querySelectorAll('.btn-type').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + type).classList.add('active');
+        renderChart(); // Redraw chart based on new type
+    }
+
+    // --- CHART RENDERING ENGINE ---
+    function renderChart() {
+        if (!globalApiData) return; // Don't draw if data hasn't loaded yet
+
+        // 1. Erase the old line/candle graph
+        if (currentSeries) {
+            chart.removeSeries(currentSeries);
         }
-    });
-    
-    // Create the line series for our index points
-    const lineSeries = chart.addLineSeries({
-        color: '#3fb950',
-        lineWidth: 2,
-    });
 
-    // Handle window resizing to keep chart responsive
-    window.addEventListener('resize', () => {
-        chart.resize(chartContainer.clientWidth, 400);
-    });
+        // 2. Create the new style (Line vs Candle)
+        if (currentChartType === 'line') {
+            currentSeries = chart.addLineSeries({ color: '#3fb950', lineWidth: 2 });
+        } else {
+            currentSeries = chart.addCandlestickSeries({
+                upColor: '#3fb950', downColor: '#f85149', 
+                borderVisible: false, wickUpColor: '#3fb950', wickDownColor: '#f85149'
+            });
+        }
 
-    // 3. The Fetch Loop (Pulls Data & Updates UI securely)
+        // 3. Filter the Data based on Timeframe
+        let finalData = [];
+
+        if (currentTimeframe === '1D') {
+            // Use Intraday Tick Data
+            const source = globalApiData.intraday_history || [];
+            finalData = source.map(tick => {
+                const ts = (new Date(tick.time.replace(" ", "T") + "+06:30").getTime()) / 1000;
+                if (currentChartType === 'line') {
+                    return { time: ts, value: tick.close };
+                } else {
+                    // For intraday, we only have the 'close' tick, so we fake a candle
+                    return { time: ts, open: tick.close, high: tick.close, low: tick.close, close: tick.close };
+                }
+            });
+        } else {
+            // Use Historical Daily Candles
+            let source = globalApiData.daily_candle_history || [];
+            let daysToKeep = 0;
+            
+            if (currentTimeframe === '1W') daysToKeep = 7;
+            if (currentTimeframe === '1M') daysToKeep = 30;
+            if (currentTimeframe === '6M') daysToKeep = 180;
+            if (currentTimeframe === '1Y') daysToKeep = 365;
+
+            // Slice the array to only keep the required number of days
+            if (daysToKeep > 0) {
+                source = source.slice(-daysToKeep);
+            }
+
+            finalData = source.map(day => {
+                if (currentChartType === 'line') {
+                    return { time: day.date, value: day.close };
+                } else {
+                    return { time: day.date, open: day.open, high: day.high, low: day.low, close: day.close };
+                }
+            });
+        }
+
+        // 4. Inject the data into the chart and auto-fit the screen
+        currentSeries.setData(finalData);
+        chart.timeScale().fitContent();
+    }
+
+    // --- DATA FETCHING ---
     async function fetchAndUpdateTerminal() {
         try {
-            const response = await fetch(API_URL, { cache: 'no-store' }); // bypass browser cache
-            if (!response.ok) throw new Error("Failed to fetch API");
+            const response = await fetch(API_URL + "?t=" + new Date().getTime()); 
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
             const data = await response.json();
-
-            // UPDATE METADATA (Safe textContent prevents XSS)
-            document.getElementById('ui-time').textContent = data.system_metadata.last_updated_mmt;
-            document.getElementById('ui-status').textContent = data.system_metadata.market_status;
-
-            // UPDATE SCOREBOARD
-            const points = data.index_metrics.current_points.toFixed(2);
-            const netChange = data.index_metrics.net_change;
-            const percentChange = data.index_metrics.percentage_change;
-
-            document.getElementById('ui-points').textContent = points;
-            document.getElementById('ui-high').textContent = data.index_metrics.daily_high.toFixed(2);
-            document.getElementById('ui-low').textContent = data.index_metrics.daily_low.toFixed(2);
             
+            // Save to memory so buttons can use it instantly
+            globalApiData = data; 
+
+            // Update Metadata & Scoreboard
+            document.getElementById('ui-time').textContent = data?.system_metadata?.last_updated_mmt || "N/A";
+            document.getElementById('ui-status').textContent = data?.system_metadata?.market_status || "Unknown";
+            document.getElementById('ui-points').textContent = data?.index_metrics?.current_points?.toFixed(2) || "0.00";
+            document.getElementById('ui-high').textContent = data?.index_metrics?.daily_high?.toFixed(2) || "0.00";
+            document.getElementById('ui-low').textContent = data?.index_metrics?.daily_low?.toFixed(2) || "0.00";
+            
+            const netChange = data?.index_metrics?.net_change || 0;
             const changeEl = document.getElementById('ui-change');
-            changeEl.textContent = `${netChange > 0 ? '+' : ''}${netChange.toFixed(2)} (${percentChange})`;
+            changeEl.textContent = `${netChange >= 0 ? '+' : ''}${netChange.toFixed(2)} (${data?.index_metrics?.percentage_change || '0%'})`;
             changeEl.className = 'metric-value ' + (netChange >= 0 ? 'green' : 'red');
 
-            // UPDATE CHART
-            // Convert custom time string "YYYY-MM-DD HH:MM" to Unix timestamp required by TradingView
-            const chartData = data.intraday_history.map(tick => {
-                // Formatting time string to a standard ISO format to parse safely in JS (+06:30 for MMT)
-                const parsedDate = new Date(tick.time.replace(" ", "T") + "+06:30"); 
-                return {
-                    time: parsedDate.getTime() / 1000, 
-                    value: tick.close
-                };
-            });
-            lineSeries.setData(chartData);
+            // Draw Chart
+            renderChart();
 
-            // UPDATE CONSTITUENTS TABLE
+            // Update Table
             const tableBody = document.getElementById('ui-table-body');
-            tableBody.innerHTML = ''; // Clear old rows
-            
-            data.constituents.forEach(stock => {
-                const row = document.createElement('tr');
-                
-                // Determine color for the trend
-                const changeColor = stock.change >= 0 ? 'green' : 'red';
-                const changeIcon = stock.change >= 0 ? '📈' : '🔻';
-
-                // Securely creating cells
-                row.innerHTML = `
-                    <td style="font-weight: bold; color: #ffffff;">${stock.ticker}</td>
-                    <td>${stock.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-                    <td>${stock.weight_percent.toFixed(2)}%</td>
-                    <td class="${changeColor}">${changeIcon} ${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            console.log("Terminal successfully updated:", new Date().toLocaleTimeString());
-
+            tableBody.innerHTML = ''; 
+            if (data?.constituents) {
+                data.constituents.forEach(stock => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-weight: bold; color: #ffffff;">${stock.ticker}</td>
+                        <td>${stock.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        <td>${stock.weight_percent.toFixed(2)}%</td>
+                        <td class="${stock.change >= 0 ? 'green' : 'red'}">${stock.change >= 0 ? '📈' : '🔻'} ${stock.change.toFixed(2)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
         } catch (error) {
             console.error("Terminal Error:", error);
+            document.getElementById('ui-status').textContent = "Connection Error";
         }
     }
 
-    // 4. Start the Engine
-    fetchAndUpdateTerminal(); // Run immediately on load
-    setInterval(fetchAndUpdateTerminal, 60000); // Check for updates every 60 seconds
+    // Start Engine
+    window.onload = fetchAndUpdateTerminal;
+    setInterval(fetchAndUpdateTerminal, 60000);
 </script>
 
 </body>
