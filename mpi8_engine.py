@@ -84,6 +84,14 @@ def load_existing_state():
 
 def compile_api():
     is_open, status_message = check_market_hours()
+
+    # --- SLEEP PROTOCOL ---
+    # If the market is closed, stop the engine immediately.
+    if not is_open:
+        print(f"Engine Sleep Mode Active: {status_message}. api.json remains frozen.")
+        return 
+    # ----------------------
+
     intraday_hist, daily_hist, last_known_prices = load_existing_state()
     scraped_prices = scrape_ysx()
     final_prices = {}
