@@ -2,7 +2,9 @@ name: MPI 8 Live Index Engine
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    # Runs every 10 minutes between 9:30 AM and 2:30 PM MMT, Monday-Friday.
+    # (The Python script acts as a secondary shield and will block it perfectly at 1:30 PM)
+    - cron: '*/10 3-7 * * 1-5'
   workflow_dispatch:
 
 jobs:
