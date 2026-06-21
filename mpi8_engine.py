@@ -3,7 +3,7 @@
 MPI 8 Index Engine - Cloud Deployment Edition
 Description: Autonomous single-fire data generation block for MPI 8.
              Features: Safe-write backups, dynamic market trend analysis, 
-             and standardized 1,000-point baselining.
+             standardized 1,000-point baselining, and Sleep Protocol.
 """
 
 import os
@@ -21,14 +21,13 @@ MAX_INTRADAY_POINTS = 50
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "api.json")
-BACKUP_FILE = os.path.join(SCRIPT_DIR, "api_backup.json") # NEW: Data corruption shield
+BACKUP_FILE = os.path.join(SCRIPT_DIR, "api_backup.json") 
 
 CONSTITUENT_SHARES = {
     "FMI": 27112747, "MTSH": 38929150, "MCB": 10400986, "FPB": 2472053,
     "TMH": 12213224, "EFR": 48740248, "AMATA": 10000000, "MAEX": 24561164
 }
 
-# UPDATED: Massive divisor to force the index baseline down to exactly ~1,000 points
 INDEX_BASE_DIVISOR = 645241392.0 
 
 BASELINE_PRICES = {
@@ -72,7 +71,6 @@ def scrape_ysx():
         return None
 
 def load_existing_state():
-    # NEW: Safety system. If api.json exists, back it up before reading/writing.
     if os.path.exists(OUTPUT_FILE):
         try:
             shutil.copy(OUTPUT_FILE, BACKUP_FILE)
@@ -84,6 +82,14 @@ def load_existing_state():
 
 def compile_api():
     is_open, status_message = check_market_hours()
+
+    # --- SLEEP PROTOCOL ---
+    # If the market is closed, stop the engine immediately. Do not write to api.json.
+    if not is_open:
+        print(f"Engine Sleep Mode Active: {status_message}. api.json remains frozen.")
+        return 
+    # ----------------------
+
     intraday_hist, daily_hist, last_known_prices = load_existing_state()
     scraped_prices = scrape_ysx()
     final_prices = {}
@@ -104,7 +110,6 @@ def compile_api():
     else:
         data_source = "Scraped Live (YSX)"
 
-    # --- MATH ENGINE ---
     total_market_cap = sum(price * CONSTITUENT_SHARES[ticker] for ticker, price in final_prices.items())
     index_points = round(total_market_cap / INDEX_BASE_DIVISOR, 2)
     
@@ -120,7 +125,6 @@ def compile_api():
     current_date_str = mmt_now.strftime("%Y-%m-%d")
     current_time_str = mmt_now.strftime("%Y-%m-%d %H:%M")
 
-    # Intraday Candle Management
     intra_open = intraday_hist[-1]["close"] if intraday_hist else index_points
     new_intra = {
         "time": current_time_str, "open": round(intra_open, 2),
@@ -135,7 +139,6 @@ def compile_api():
         intraday_hist.append(new_intra)
     if len(intraday_hist) > MAX_INTRADAY_POINTS: intraday_hist = intraday_hist[-MAX_INTRADAY_POINTS:]
 
-    # Daily Master Candle Management
     if daily_hist and daily_hist[-1]["date"] == current_date_str:
         daily_hist[-1]["high"] = round(max(daily_hist[-1]["high"], index_points), 2)
         daily_hist[-1]["low"] = round(min(daily_hist[-1]["low"], index_points), 2)
@@ -143,7 +146,6 @@ def compile_api():
     else:
         daily_hist.append({"date": current_date_str, "open": index_points, "high": index_points, "low": index_points, "close": index_points})
 
-    # NEW: Advanced Analytics
     net_change = round(intraday_hist[-1]["close"] - intraday_hist[0]["open"], 2)
     
     if intraday_hist[0]['open'] != 0:
@@ -158,21 +160,20 @@ def compile_api():
     else:
         market_sentiment = "Neutral ⚖️"
 
-    # --- API COMPILATION ---
     api_payload = {
         "system_metadata": {
             "index_ticker": "MPI 8", 
             "index_name": "Myanmar's Public Index 8",
             "data_source": data_source, 
             "market_status": status_message,
-            "market_sentiment": market_sentiment, # NEW: Algorithmic trend detection
+            "market_sentiment": market_sentiment, 
             "last_updated_mmt": mmt_now.strftime("%Y-%m-%d %H:%M:%S MMT")
         },
         "index_metrics": {
             "current_points": index_points,
             "net_change": net_change,
             "percentage_change": f"{'+' if percent_change > 0 else ''}{percent_change}%",
-            "daily_high": daily_hist[-1]["high"], # NEW: Quick-grab metrics
+            "daily_high": daily_hist[-1]["high"], 
             "daily_low": daily_hist[-1]["low"]
         },
         "intraday_history": intraday_hist,
@@ -180,7 +181,6 @@ def compile_api():
         "constituents": constituents_payload
     }
 
-    # Safe Write
     with open(OUTPUT_FILE, "w") as f:
         json.dump(api_payload, f, indent=2)
 
