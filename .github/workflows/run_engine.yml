@@ -2,9 +2,8 @@ name: MPI 8 Live Index Engine
 
 on:
   schedule:
-    # Runs every 10 minutes between 9:30 AM and 1:30 PM MMT (3:00 - 6:00 UTC), Mon-Fri.
-    - cron: '*/10 3-6 * * 1-5'
-  workflow_dispatch: # Allows manual triggers and cron-job.org Webhooks
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 jobs:
   update-index:
