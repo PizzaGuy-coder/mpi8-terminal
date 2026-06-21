@@ -12,8 +12,9 @@
             --panel-bg: #161b22;
             --text-main: #c9d1d9;
             --text-muted: #8b949e;
-            --green: #3fb950;
-            --red: #f85149;
+            --green: #26a69a; /* Professional TV Green */
+            --red: #ef5350;   /* Professional TV Red */
+            --yellow: #ffb74d;
             --border: #30363d;
             --active-bg: #1f6feb;
             --font-mono: 'Consolas', 'Courier New', monospace;
@@ -30,8 +31,8 @@
         .metric-value { font-size: 1.5rem; font-weight: bold; }
         .green { color: var(--green); }
         .red { color: var(--red); }
+        .yellow { color: var(--yellow); }
         
-        /* NEW: Button Controls Styling */
         .chart-controls { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         .btn-group { display: flex; gap: 5px; }
         .btn { background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border); padding: 5px 12px; cursor: pointer; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85rem; transition: 0.2s; }
@@ -49,7 +50,10 @@
 <div class="container">
     <div class="panel">
         <div class="header">
-            <h1>[ 🟢 LIVE ] MPI 8 TERMINAL</h1>
+            <div>
+                <h1 id="main-title">[ ⚪ CONNECTING ] MPI 8 TERMINAL</h1>
+                <div id="countdown-timer" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">⏱️ --:--:-- calculating...</div>
+            </div>
             <div class="status-badge" id="ui-time">Initializing...</div>
         </div>
         
@@ -72,8 +76,8 @@
                 <button class="btn btn-tf" id="btn-ALL" onclick="setTimeframe('ALL')">ALL</button>
             </div>
             <div class="btn-group">
-                <button class="btn btn-type active" id="btn-line" onclick="setChartType('line')">Line</button>
-                <button class="btn btn-type" id="btn-candle" onclick="setChartType('candle')">Candle</button>
+                <button class="btn btn-type" id="btn-line" onclick="setChartType('line')">Line</button>
+                <button class="btn btn-type active" id="btn-candle" onclick="setChartType('candle')">Candle</button>
             </div>
         </div>
         <div id="chart-container"></div>
@@ -89,15 +93,15 @@
 </div>
 
 <script>
-    const API_URL = 'api.json';
+    const GITHUB_USER = 'PizzaGuy-coder';
+    const REPO_NAME = 'mpi8-terminal';
+    const API_URL = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${REPO_NAME}@main/api.json`;
     
-    // --- APP STATE MEMORY ---
     let globalApiData = null; 
     let currentSeries = null;
-    let currentChartType = 'line'; // Default to line
-    let currentTimeframe = '1D';   // Default to 1 Day
+    let currentChartType = 'candle';
+    let currentTimeframe = '1D';
 
-    // --- CHART INITIALIZATION ---
     const chartContainer = document.getElementById('chart-container');
     const chart = LightweightCharts.createChart(chartContainer, {
         width: chartContainer.clientWidth, height: 400,
@@ -107,69 +111,145 @@
     });
     window.addEventListener('resize', () => chart.resize(chartContainer.clientWidth, 400));
 
-    // --- UI TOGGLE LOGIC ---
+    // --- LIVE COUNTDOWN TIMER ---
+    function updateCountdown() {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const mmt = new Date(utc + (3600000 * 6.5)); // Current MMT
+
+        let target = new Date(mmt);
+        target.setSeconds(0);
+        target.setMilliseconds(0);
+
+        const day = mmt.getDay();
+        const hours = mmt.getHours();
+        const minutes = mmt.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
+
+        let statusStr = "";
+
+        // Market Hours: 9:30 AM (570 mins) to 1:30 PM (810 mins)
+        if (day === 0 || day === 6 || (day === 5 && totalMinutes >= 810)) {
+            // Weekend or Friday after 1:30 PM -> Target: Next Monday 9:30 AM
+            let daysToAdd = (day === 5) ? 3 : (day === 6) ? 2 : 1;
+            target.setDate(target.getDate() + daysToAdd);
+            target.setHours(9, 30);
+            statusStr = "until market opens";
+        } else if (totalMinutes < 570) {
+            // Weekday Pre-market (Before 9:30 AM)
+            target.setHours(9, 30);
+            statusStr = "until market opens";
+        } else if (totalMinutes >= 810) {
+            // Weekday After close (After 1:30 PM) -> Target: Tomorrow 9:30 AM
+            target.setDate(target.getDate() + 1);
+            target.setHours(9, 30);
+            statusStr = "until market opens";
+        } else {
+            // Live Market (9:30 AM to 1:30 PM)
+            target.setHours(13, 30);
+            statusStr = "until market closes";
+        }
+
+        const diff = target - mmt;
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const pad = (num) => num.toString().padStart(2, '0');
+        const timerText = `⏱️ ${pad(h)}:${pad(m)}:${pad(s)} ${statusStr}`;
+
+        const timerEl = document.getElementById('countdown-timer');
+        if (timerEl) timerEl.textContent = timerText;
+    }
+
+    // --- MARKET STATUS ENGINE ---
+    function updateMarketStatusUI() {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const mmt = new Date(utc + (3600000 * 6.5)); 
+        
+        const day = mmt.getDay();
+        const totalMinutes = mmt.getHours() * 60 + mmt.getMinutes();
+        const titleEl = document.getElementById('main-title');
+        
+        if (day === 0 || day === 6) {
+            titleEl.innerHTML = `<span style="color: var(--red);">[ 🔴 CLOSED ]</span> MPI 8 TERMINAL`;
+            return "CLOSED";
+        }
+
+        // 570 = 9:30 AM | 810 = 1:30 PM | 795 = 1:15 PM
+        if (totalMinutes < 570) {
+            titleEl.innerHTML = `<span style="color: var(--yellow);">[ 🟡 PRE-MARKET ]</span> MPI 8 TERMINAL`;
+            return "CLOSED"; // Returns CLOSED to trigger the Sleep Protocol
+        } else if (totalMinutes >= 810) {
+            titleEl.innerHTML = `<span style="color: var(--red);">[ 🔴 CLOSED ]</span> MPI 8 TERMINAL`;
+            return "CLOSED";
+        } else if (totalMinutes >= 795) {
+            titleEl.innerHTML = `<span style="color: var(--yellow);">[ 🟡 CLOSING SOON ]</span> MPI 8 TERMINAL`;
+            return "LIVE";
+        } else {
+            titleEl.innerHTML = `<span style="color: var(--green);">[ 🟢 LIVE ]</span> MPI 8 TERMINAL`;
+            return "LIVE";
+        }
+    }
+
     function setTimeframe(tf) {
         currentTimeframe = tf;
         document.querySelectorAll('.btn-tf').forEach(btn => btn.classList.remove('active'));
         document.getElementById('btn-' + tf).classList.add('active');
-        renderChart(); // Redraw chart based on new timeframe
+        renderChart();
     }
 
     function setChartType(type) {
         currentChartType = type;
         document.querySelectorAll('.btn-type').forEach(btn => btn.classList.remove('active'));
         document.getElementById('btn-' + type).classList.add('active');
-        renderChart(); // Redraw chart based on new type
+        renderChart();
     }
 
-    // --- CHART RENDERING ENGINE ---
     function renderChart() {
-        if (!globalApiData) return; // Don't draw if data hasn't loaded yet
+        if (!globalApiData) return;
 
-        // 1. Erase the old line/candle graph
         if (currentSeries) {
             chart.removeSeries(currentSeries);
         }
 
-        // 2. Create the new style (Line vs Candle)
         if (currentChartType === 'line') {
-            currentSeries = chart.addLineSeries({ color: '#3fb950', lineWidth: 2 });
+            currentSeries = chart.addLineSeries({ color: '#26a69a', lineWidth: 2 });
         } else {
             currentSeries = chart.addCandlestickSeries({
-                upColor: '#3fb950', downColor: '#f85149', 
-                borderVisible: false, wickUpColor: '#3fb950', wickDownColor: '#f85149'
+                upColor: '#26a69a', 
+                downColor: '#ef5350', 
+                borderVisible: true, 
+                borderColor: '#26a69a',
+                borderUpColor: '#26a69a',
+                borderDownColor: '#ef5350',
+                wickUpColor: '#26a69a', 
+                wickDownColor: '#ef5350'
             });
         }
 
-        // 3. Filter the Data based on Timeframe
         let finalData = [];
 
         if (currentTimeframe === '1D') {
-            // Use Intraday Tick Data
             const source = globalApiData.intraday_history || [];
             finalData = source.map(tick => {
                 const ts = (new Date(tick.time.replace(" ", "T") + "+06:30").getTime()) / 1000;
                 if (currentChartType === 'line') {
                     return { time: ts, value: tick.close };
                 } else {
-                    // For intraday, we only have the 'close' tick, so we fake a candle
-                    return { time: ts, open: tick.close, high: tick.close, low: tick.close, close: tick.close };
+                    return { time: ts, open: tick.open || tick.close, high: tick.high || tick.close, low: tick.low || tick.close, close: tick.close };
                 }
             });
         } else {
-            // Use Historical Daily Candles
             let source = globalApiData.daily_candle_history || [];
             let daysToKeep = 0;
-            
             if (currentTimeframe === '1W') daysToKeep = 7;
             if (currentTimeframe === '1M') daysToKeep = 30;
             if (currentTimeframe === '6M') daysToKeep = 180;
             if (currentTimeframe === '1Y') daysToKeep = 365;
 
-            // Slice the array to only keep the required number of days
-            if (daysToKeep > 0) {
-                source = source.slice(-daysToKeep);
-            }
+            if (daysToKeep > 0) source = source.slice(-daysToKeep);
 
             finalData = source.map(day => {
                 if (currentChartType === 'line') {
@@ -180,24 +260,29 @@
             });
         }
 
-        // 4. Inject the data into the chart and auto-fit the screen
         currentSeries.setData(finalData);
         chart.timeScale().fitContent();
     }
 
-    // --- DATA FETCHING ---
-    async function fetchAndUpdateTerminal() {
+    async function fetchAndUpdateTerminal(isInitialLoad = false) {
         try {
+            const marketState = updateMarketStatusUI();
+            
+            // --- SLEEP PROTOCOL ---
+            if (marketState === "CLOSED" && !isInitialLoad) {
+                console.log("Market is closed. Terminal API fetcher is sleeping...");
+                return; 
+            }
+            
             const response = await fetch(API_URL + "?t=" + new Date().getTime()); 
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
             const data = await response.json();
             
-            // Save to memory so buttons can use it instantly
             globalApiData = data; 
 
-            // Update Metadata & Scoreboard
             document.getElementById('ui-time').textContent = data?.system_metadata?.last_updated_mmt || "N/A";
             document.getElementById('ui-status').textContent = data?.system_metadata?.market_status || "Unknown";
+            
             document.getElementById('ui-points').textContent = data?.index_metrics?.current_points?.toFixed(2) || "0.00";
             document.getElementById('ui-high').textContent = data?.index_metrics?.daily_high?.toFixed(2) || "0.00";
             document.getElementById('ui-low').textContent = data?.index_metrics?.daily_low?.toFixed(2) || "0.00";
@@ -207,10 +292,8 @@
             changeEl.textContent = `${netChange >= 0 ? '+' : ''}${netChange.toFixed(2)} (${data?.index_metrics?.percentage_change || '0%'})`;
             changeEl.className = 'metric-value ' + (netChange >= 0 ? 'green' : 'red');
 
-            // Draw Chart
             renderChart();
 
-            // Update Table
             const tableBody = document.getElementById('ui-table-body');
             tableBody.innerHTML = ''; 
             if (data?.constituents) {
@@ -227,13 +310,17 @@
             }
         } catch (error) {
             console.error("Terminal Error:", error);
+            document.getElementById('main-title').innerHTML = `<span style="color: var(--red);">[ ⚠️ OFFLINE ]</span> MPI 8 TERMINAL`;
             document.getElementById('ui-status').textContent = "Connection Error";
         }
     }
 
-    // Start Engine
-    window.onload = fetchAndUpdateTerminal;
-    setInterval(fetchAndUpdateTerminal, 60000);
+    // --- INITIALIZATION ---
+    updateCountdown(); // Start timer immediately
+    setInterval(updateCountdown, 1000); // Tick timer every 1 second
+    
+    window.onload = () => fetchAndUpdateTerminal(true); // Force fetch on page load
+    setInterval(() => fetchAndUpdateTerminal(false), 60000); // Fetch API every 60s (if open)
 </script>
 
 </body>
