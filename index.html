@@ -12,8 +12,8 @@
             --panel-bg: #161b22;
             --text-main: #c9d1d9;
             --text-muted: #8b949e;
-            --green: #26a69a; /* Professional TV Green */
-            --red: #ef5350;   /* Professional TV Red */
+            --green: #26a69a; 
+            --red: #ef5350;   
             --yellow: #ffb74d;
             --border: #30363d;
             --active-bg: #1f6feb;
@@ -95,7 +95,8 @@
 <script>
     const GITHUB_USER = 'PizzaGuy-coder';
     const REPO_NAME = 'mpi8-terminal';
-    const API_URL = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${REPO_NAME}@main/api.json`;
+    // FIXED: Changed CDN to raw GitHub link to instantly clear engine update caches
+    const API_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/api.json`;
     
     let globalApiData = null; 
     let currentSeries = null;
@@ -113,9 +114,9 @@
 
     // --- LIVE COUNTDOWN TIMER ---
     function updateCountdown() {
-        const now = new Date();
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const mmt = new Date(utc + (3600000 * 6.5)); // Current MMT
+        // FIXED: Switched to robust internationalization parameters to lock calculations strictly onto Asia/Yangon time context
+        const mmtString = new Date().toLocaleString("en-US", { timeZone: "Asia/Yangon" });
+        const mmt = new Date(mmtString);
 
         let target = new Date(mmt);
         target.setSeconds(0);
@@ -128,24 +129,19 @@
 
         let statusStr = "";
 
-        // Market Hours: 9:30 AM (570 mins) to 1:30 PM (810 mins)
         if (day === 0 || day === 6 || (day === 5 && totalMinutes >= 810)) {
-            // Weekend or Friday after 1:30 PM -> Target: Next Monday 9:30 AM
             let daysToAdd = (day === 5) ? 3 : (day === 6) ? 2 : 1;
             target.setDate(target.getDate() + daysToAdd);
             target.setHours(9, 30);
             statusStr = "until market opens";
         } else if (totalMinutes < 570) {
-            // Weekday Pre-market (Before 9:30 AM)
             target.setHours(9, 30);
             statusStr = "until market opens";
         } else if (totalMinutes >= 810) {
-            // Weekday After close (After 1:30 PM) -> Target: Tomorrow 9:30 AM
             target.setDate(target.getDate() + 1);
             target.setHours(9, 30);
             statusStr = "until market opens";
         } else {
-            // Live Market (9:30 AM to 1:30 PM)
             target.setHours(13, 30);
             statusStr = "until market closes";
         }
@@ -164,9 +160,8 @@
 
     // --- MARKET STATUS ENGINE ---
     function updateMarketStatusUI() {
-        const now = new Date();
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const mmt = new Date(utc + (3600000 * 6.5)); 
+        const mmtString = new Date().toLocaleString("en-US", { timeZone: "Asia/Yangon" });
+        const mmt = new Date(mmtString);
         
         const day = mmt.getDay();
         const totalMinutes = mmt.getHours() * 60 + mmt.getMinutes();
@@ -177,10 +172,9 @@
             return "CLOSED";
         }
 
-        // 570 = 9:30 AM | 810 = 1:30 PM | 795 = 1:15 PM
         if (totalMinutes < 570) {
             titleEl.innerHTML = `<span style="color: var(--yellow);">[ 🟡 PRE-MARKET ]</span> MPI 8 TERMINAL`;
-            return "CLOSED"; // Returns CLOSED to trigger the Sleep Protocol
+            return "CLOSED"; 
         } else if (totalMinutes >= 810) {
             titleEl.innerHTML = `<span style="color: var(--red);">[ 🔴 CLOSED ]</span> MPI 8 TERMINAL`;
             return "CLOSED";
@@ -218,14 +212,9 @@
             currentSeries = chart.addLineSeries({ color: '#26a69a', lineWidth: 2 });
         } else {
             currentSeries = chart.addCandlestickSeries({
-                upColor: '#26a69a', 
-                downColor: '#ef5350', 
-                borderVisible: true, 
-                borderColor: '#26a69a',
-                borderUpColor: '#26a69a',
-                borderDownColor: '#ef5350',
-                wickUpColor: '#26a69a', 
-                wickDownColor: '#ef5350'
+                upColor: '#26a69a', downColor: '#ef5350', borderVisible: true, 
+                borderColor: '#26a69a', borderUpColor: '#26a69a', borderDownColor: '#ef5350',
+                wickUpColor: '#26a69a', wickDownColor: '#ef5350'
             });
         }
 
@@ -252,23 +241,29 @@
             if (daysToKeep > 0) source = source.slice(-daysToKeep);
 
             finalData = source.map(day => {
+                // FIXED: Convert YYYY-MM-DD strings into UNIX timestamps to protect chart compilation from throwing data type collision errors
+                const ts = (new Date(day.date + "T00:00:00+06:30").getTime()) / 1000;
                 if (currentChartType === 'line') {
-                    return { time: day.date, value: day.close };
+                    return { time: ts, value: day.close };
                 } else {
-                    return { time: day.date, open: day.open, high: day.high, low: day.low, close: day.close };
+                    return { time: ts, open: day.open, high: day.high, low: day.low, close: day.close };
                 }
             });
         }
 
-        currentSeries.setData(finalData);
-        chart.timeScale().fitContent();
+        // Sort data chronologically to fulfill Lightweight Charts ordering standards
+        finalData.sort((a, b) => a.time - b.time);
+
+        if (finalData.length > 0) {
+            currentSeries.setData(finalData);
+            chart.timeScale().fitContent();
+        }
     }
 
     async function fetchAndUpdateTerminal(isInitialLoad = false) {
         try {
             const marketState = updateMarketStatusUI();
             
-            // --- SLEEP PROTOCOL ---
             if (marketState === "CLOSED" && !isInitialLoad) {
                 console.log("Market is closed. Terminal API fetcher is sleeping...");
                 return; 
@@ -278,25 +273,30 @@
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
             const data = await response.json();
             
+            // Check for valid payload structure to defend against empty JSON files
+            if (!data || !data.system_metadata) {
+                throw new Error("Target file payload appears uninitialized.");
+            }
+            
             globalApiData = data; 
 
-            document.getElementById('ui-time').textContent = data?.system_metadata?.last_updated_mmt || "N/A";
-            document.getElementById('ui-status').textContent = data?.system_metadata?.market_status || "Unknown";
+            document.getElementById('ui-time').textContent = data.system_metadata.last_updated_mmt || "N/A";
+            document.getElementById('ui-status').textContent = data.system_metadata.market_status || "Unknown";
             
-            document.getElementById('ui-points').textContent = data?.index_metrics?.current_points?.toFixed(2) || "0.00";
-            document.getElementById('ui-high').textContent = data?.index_metrics?.daily_high?.toFixed(2) || "0.00";
-            document.getElementById('ui-low').textContent = data?.index_metrics?.daily_low?.toFixed(2) || "0.00";
+            document.getElementById('ui-points').textContent = data.index_metrics.current_points?.toFixed(2) || "0.00";
+            document.getElementById('ui-high').textContent = data.index_metrics.daily_high?.toFixed(2) || "0.00";
+            document.getElementById('ui-low').textContent = data.index_metrics.daily_low?.toFixed(2) || "0.00";
             
-            const netChange = data?.index_metrics?.net_change || 0;
+            const netChange = data.index_metrics.net_change || 0;
             const changeEl = document.getElementById('ui-change');
-            changeEl.textContent = `${netChange >= 0 ? '+' : ''}${netChange.toFixed(2)} (${data?.index_metrics?.percentage_change || '0%'})`;
+            changeEl.textContent = `${netChange >= 0 ? '+' : ''}${netChange.toFixed(2)} (${data.index_metrics.percentage_change || '0%'})`;
             changeEl.className = 'metric-value ' + (netChange >= 0 ? 'green' : 'red');
 
             renderChart();
 
             const tableBody = document.getElementById('ui-table-body');
             tableBody.innerHTML = ''; 
-            if (data?.constituents) {
+            if (data.constituents) {
                 data.constituents.forEach(stock => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -311,16 +311,16 @@
         } catch (error) {
             console.error("Terminal Error:", error);
             document.getElementById('main-title').innerHTML = `<span style="color: var(--red);">[ ⚠️ OFFLINE ]</span> MPI 8 TERMINAL`;
-            document.getElementById('ui-status').textContent = "Connection Error";
+            document.getElementById('ui-status').textContent = "Empty Data or Network Delay";
         }
     }
 
     // --- INITIALIZATION ---
-    updateCountdown(); // Start timer immediately
-    setInterval(updateCountdown, 1000); // Tick timer every 1 second
+    updateCountdown(); 
+    setInterval(updateCountdown, 1000); 
     
-    window.onload = () => fetchAndUpdateTerminal(true); // Force fetch on page load
-    setInterval(() => fetchAndUpdateTerminal(false), 60000); // Fetch API every 60s (if open)
+    window.onload = () => fetchAndUpdateTerminal(true); 
+    setInterval(() => fetchAndUpdateTerminal(false), 60000); 
 </script>
 
 </body>
