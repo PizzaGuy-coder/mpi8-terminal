@@ -3,7 +3,7 @@
 MPI 8 Index Engine - Cloud Deployment Edition
 Description: Autonomous single-fire data generation block for MPI 8.
              Features: Safe-write backups, dynamic market trend analysis, 
-             and standardized 1,000-point baselining.
+             standardized 1,000-point baselining, and Historical Backfilling.
 """
 
 import os
@@ -21,23 +21,22 @@ MAX_INTRADAY_POINTS = 50
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "api.json")
-BACKUP_FILE = os.path.join(SCRIPT_DIR, "api_backup.json") # NEW: Data corruption shield
+BACKUP_FILE = os.path.join(SCRIPT_DIR, "api_backup.json")
 
 CONSTITUENT_SHARES = {
     "FMI": 27112747, "MTSH": 38929150, "MCB": 10400986, "FPB": 2472053,
     "TMH": 12213224, "EFR": 48740248, "AMATA": 10000000, "MAEX": 24561164
 }
 
-# UPDATED: Massive divisor to force the index baseline down to exactly ~1,000 points
 INDEX_BASE_DIVISOR = 645241392.0 
 
+# FIXED: Updated to realistic mid-2026 YSX market baselines
 BASELINE_PRICES = {
-    "FMI": 8500.0, "MTSH": 2900.0, "MCB": 7800.0, "FPB": 1600.0,
+    "FMI": 19000.0, "MTSH": 9800.0, "MCB": 7800.0, "FPB": 1600.0,
     "TMH": 2400.0, "EFR": 1950.0, "AMATA": 4800.0, "MAEX": 1800.0
 }
 
 def check_market_hours():
-    # Locked to Myanmar Time (MMT)
     mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
     if mmt_now.weekday() >= 5:
         return False, "Market Closed (Weekend)"
@@ -72,7 +71,6 @@ def scrape_ysx():
         return None
 
 def load_existing_state():
-    # NEW: Safety system. If api.json exists, back it up before reading/writing.
     if os.path.exists(OUTPUT_FILE):
         try:
             shutil.copy(OUTPUT_FILE, BACKUP_FILE)
@@ -82,15 +80,38 @@ def load_existing_state():
         except Exception: pass
     return [], [], {}
 
+def generate_historical_backfill(base_points):
+    """Generates 365 days of fake past market data so timeframe UI buttons work instantly."""
+    history = []
+    mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
+    current_sim_points = base_points * 0.85 # Start 15% lower a year ago
+
+    for i in range(365, 0, -1):
+        date_str = (mmt_now - timedelta(days=i)).strftime("%Y-%m-%d")
+        # Ensure weekdays only for realistic market data
+        date_obj = mmt_now - timedelta(days=i)
+        if date_obj.weekday() >= 5: continue 
+        
+        change = current_sim_points * random.uniform(-0.015, 0.016)
+        open_p = current_sim_points
+        close_p = open_p + change
+        high_p = max(open_p, close_p) + abs(change * random.uniform(0.1, 0.5))
+        low_p = min(open_p, close_p) - abs(change * random.uniform(0.1, 0.5))
+        
+        history.append({
+            "date": date_str,
+            "open": round(open_p, 2), "high": round(high_p, 2),
+            "low": round(low_p, 2), "close": round(close_p, 2)
+        })
+        current_sim_points = close_p
+    return history
+
 def compile_api():
     is_open, status_message = check_market_hours()
 
-    # --- SLEEP PROTOCOL ---
-    # If the market is closed, stop the engine immediately.
     if not is_open:
         print(f"Engine Sleep Mode Active: {status_message}. api.json remains frozen.")
         return 
-    # ----------------------
 
     intraday_hist, daily_hist, last_known_prices = load_existing_state()
     scraped_prices = scrape_ysx()
@@ -107,21 +128,27 @@ def compile_api():
 
     if not scraped_prices:
         is_simulated = True
-        final_prices = {t: round(p * (1 + random.uniform(-0.002, 0.002)), 2) for t, p in final_prices.items()}
+        for t, p in final_prices.items():
+            # FIXED: Apply YSX Tick Rules - Snap simulation to clean 100 Kyat integer increments
+            raw_price = p * (1 + random.uniform(-0.01, 0.01))
+            final_prices[t] = float(round(raw_price / 100) * 100)
         data_source = "Cloud Simulation Engine" if last_known_prices else "Baseline Initialization"
     else:
         data_source = "Scraped Live (YSX)"
 
-    # --- MATH ENGINE ---
     total_market_cap = sum(price * CONSTITUENT_SHARES[ticker] for ticker, price in final_prices.items())
     index_points = round(total_market_cap / INDEX_BASE_DIVISOR, 2)
     
     constituents_payload = []
     for ticker, price in final_prices.items():
         weight = round(((price * CONSTITUENT_SHARES[ticker]) / total_market_cap) * 100, 2)
+        # Prevent zero-division crash if last known price is missing
+        old_price = last_known_prices.get(ticker, price)
+        price_change = price - old_price
+        
         constituents_payload.append({
             "ticker": ticker, "price": price, "weight_percent": weight,
-            "change": round(random.uniform(-1.2, 1.2), 2) if is_simulated else 0.0
+            "change": round(price_change, 2)
         })
 
     mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
@@ -143,15 +170,21 @@ def compile_api():
         intraday_hist.append(new_intra)
     if len(intraday_hist) > MAX_INTRADAY_POINTS: intraday_hist = intraday_hist[-MAX_INTRADAY_POINTS:]
 
+    # FIXED: Backfill historical data if starting fresh so UI buttons work immediately
+    if not daily_hist:
+        daily_hist = generate_historical_backfill(index_points)
+
     # Daily Master Candle Management
     if daily_hist and daily_hist[-1]["date"] == current_date_str:
         daily_hist[-1]["high"] = round(max(daily_hist[-1]["high"], index_points), 2)
         daily_hist[-1]["low"] = round(min(daily_hist[-1]["low"], index_points), 2)
         daily_hist[-1]["close"] = round(index_points, 2)
     else:
-        daily_hist.append({"date": current_date_str, "open": index_points, "high": index_points, "low": index_points, "close": index_points})
+        # Carry over yesterday's close as today's open to prevent gaps
+        daily_open = daily_hist[-1]["close"] if daily_hist else index_points
+        daily_hist.append({"date": current_date_str, "open": daily_open, "high": max(daily_open, index_points), "low": min(daily_open, index_points), "close": index_points})
 
-    # NEW: Advanced Analytics
+    # Advanced Analytics
     net_change = round(intraday_hist[-1]["close"] - intraday_hist[0]["open"], 2)
     
     if intraday_hist[0]['open'] != 0:
@@ -173,14 +206,14 @@ def compile_api():
             "index_name": "Myanmar's Public Index 8",
             "data_source": data_source, 
             "market_status": status_message,
-            "market_sentiment": market_sentiment, # NEW: Algorithmic trend detection
+            "market_sentiment": market_sentiment,
             "last_updated_mmt": mmt_now.strftime("%Y-%m-%d %H:%M:%S MMT")
         },
         "index_metrics": {
             "current_points": index_points,
             "net_change": net_change,
             "percentage_change": f"{'+' if percent_change > 0 else ''}{percent_change}%",
-            "daily_high": daily_hist[-1]["high"], # NEW: Quick-grab metrics
+            "daily_high": daily_hist[-1]["high"],
             "daily_low": daily_hist[-1]["low"]
         },
         "intraday_history": intraday_hist,
@@ -188,7 +221,6 @@ def compile_api():
         "constituents": constituents_payload
     }
 
-    # Safe Write
     with open(OUTPUT_FILE, "w") as f:
         json.dump(api_payload, f, indent=2)
 
