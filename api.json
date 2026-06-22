@@ -1,1 +1,85 @@
-{}
+{
+  "system_metadata": {
+    "index_ticker": "MPI 8",
+    "index_name": "Myanmar's Public Index 8",
+    "data_source": "Baseline Initialization",
+    "market_status": "Market Open (Live Trading)",
+    "market_sentiment": "Neutral \u2696\ufe0f",
+    "last_updated_mmt": "2026-06-22 09:30:45 MMT"
+  },
+  "index_metrics": {
+    "current_points": 999.1,
+    "net_change": 0.0,
+    "percentage_change": "0.0%",
+    "daily_high": 999.1,
+    "daily_low": 999.1
+  },
+  "intraday_history": [
+    {
+      "time": "2026-06-22 09:30",
+      "open": 999.1,
+      "high": 999.12,
+      "low": 999.08,
+      "close": 999.1
+    }
+  ],
+  "daily_candle_history": [
+    {
+      "date": "2026-06-22",
+      "open": 999.1,
+      "high": 999.1,
+      "low": 999.1,
+      "close": 999.1
+    }
+  ],
+  "constituents": [
+    {
+      "ticker": "FMI",
+      "price": 8487.97,
+      "weight_percent": 35.7,
+      "change": -0.11
+    },
+    {
+      "ticker": "MTSH",
+      "price": 2902.77,
+      "weight_percent": 17.53,
+      "change": -0.74
+    },
+    {
+      "ticker": "MCB",
+      "price": 7801.99,
+      "weight_percent": 12.59,
+      "change": 1.05
+    },
+    {
+      "ticker": "FPB",
+      "price": 1603.09,
+      "weight_percent": 0.61,
+      "change": 0.02
+    },
+    {
+      "ticker": "TMH",
+      "price": 2397.37,
+      "weight_percent": 4.54,
+      "change": -0.5
+    },
+    {
+      "ticker": "EFR",
+      "price": 1947.88,
+      "weight_percent": 14.73,
+      "change": -0.27
+    },
+    {
+      "ticker": "AMATA",
+      "price": 4801.37,
+      "weight_percent": 7.45,
+      "change": 1.12
+    },
+    {
+      "ticker": "MAEX",
+      "price": 1798.84,
+      "weight_percent": 6.85,
+      "change": -0.14
+    }
+  ]
+}
