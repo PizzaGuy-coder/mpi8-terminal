@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout Repository Assets
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Initialize Cloud Python Environment
       uses: actions/setup-python@v5
@@ -30,5 +32,7 @@ jobs:
         git config --global user.name "MPI-8-Bot"
         git config --global user.email "bot@mpi8.internal"
         git add api.json
-        git diff-index --quiet HEAD || git commit -m "Engine Tick: Updated Market Metrics [External Cron Trigger]"
-        git push
+        # Stash, pull, and rebase to prevent concurrent overwrite errors
+        git commit -m "Engine Tick: Updated Market Metrics [External Trigger]" || echo "No changes to commit"
+        git pull --rebase origin main
+        git push origin main
