@@ -2,8 +2,6 @@
 """
 MPI 8 Index Engine - Cloud Deployment Edition
 Description: Autonomous single-fire data generation block for MPI 8.
-             Features: Safe-write backups, dynamic market trend analysis, 
-             standardized 1,000-point baselining, and Historical Backfilling.
 """
 
 import os
@@ -17,7 +15,6 @@ from bs4 import BeautifulSoup
 # --- CONFIGURATION ---
 YSX_URL = "https://ysx-mm.com/"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-# FIXED: Expanded to capture a full 4-hour market session (240 mins) safely
 MAX_INTRADAY_POINTS = 300 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -107,10 +104,6 @@ def generate_historical_backfill(base_points):
 def compile_api():
     is_open, status_message = check_market_hours()
 
-    if not is_open:
-        print(f"Engine Sleep Mode Active: {status_message}. api.json remains frozen.")
-        return 
-
     intraday_hist, daily_hist, last_known_prices = load_existing_state()
     scraped_prices = scrape_ysx()
     final_prices = {}
@@ -124,14 +117,16 @@ def compile_api():
         else:
             final_prices[ticker] = BASELINE_PRICES[ticker]
 
-    if not scraped_prices:
+    if not scraped_prices and is_open:
         is_simulated = True
         for t, p in final_prices.items():
             raw_price = p * (1 + random.uniform(-0.01, 0.01))
             final_prices[t] = float(round(raw_price / 100) * 100)
         data_source = "Cloud Simulation Engine" if last_known_prices else "Baseline Initialization"
-    else:
+    elif scraped_prices:
         data_source = "Scraped Live (YSX)"
+    else:
+        data_source = "Static Last Close"
 
     total_market_cap = sum(price * CONSTITUENT_SHARES[ticker] for ticker, price in final_prices.items())
     index_points = round(total_market_cap / INDEX_BASE_DIVISOR, 2)
@@ -151,13 +146,11 @@ def compile_api():
     current_date_str = mmt_now.strftime("%Y-%m-%d")
     current_time_str = mmt_now.strftime("%Y-%m-%d %H:%M")
 
-    # FIXED: Clear out yesterday's intraday data when a new session opens
     if intraday_hist:
         last_tick_date = intraday_hist[-1]["time"].split(" ")[0]
         if last_tick_date != current_date_str:
             intraday_hist = []
 
-    # Intraday Candle Management
     intra_open = intraday_hist[-1]["close"] if intraday_hist else index_points
     new_intra = {
         "time": current_time_str, "open": round(intra_open, 2),
@@ -166,16 +159,16 @@ def compile_api():
         "close": round(index_points, 2)
     }
     
-    if intraday_hist and intraday_hist[-1]["time"] == current_time_str:
-        intraday_hist[-1] = new_intra
-    else:
-        intraday_hist.append(new_intra)
-    if len(intraday_hist) > MAX_INTRADAY_POINTS: intraday_hist = intraday_hist[-MAX_INTRADAY_POINTS:]
+    if is_open or not intraday_hist:
+        if intraday_hist and intraday_hist[-1]["time"] == current_time_str:
+            intraday_hist[-1] = new_intra
+        else:
+            intraday_hist.append(new_intra)
+        if len(intraday_hist) > MAX_INTRADAY_POINTS: intraday_hist = intraday_hist[-MAX_INTRADAY_POINTS:]
 
     if not daily_hist:
         daily_hist = generate_historical_backfill(index_points)
 
-    # Daily Master Candle Management
     if daily_hist and daily_hist[-1]["date"] == current_date_str:
         daily_hist[-1]["high"] = round(max(daily_hist[-1]["high"], index_points), 2)
         daily_hist[-1]["low"] = round(min(daily_hist[-1]["low"], index_points), 2)
@@ -184,7 +177,6 @@ def compile_api():
         daily_open = daily_hist[-1]["close"] if daily_hist else index_points
         daily_hist.append({"date": current_date_str, "open": daily_open, "high": max(daily_open, index_points), "low": min(daily_open, index_points), "close": index_points})
 
-    # Advanced Analytics
     net_change = round(intraday_hist[-1]["close"] - intraday_hist[0]["open"], 2)
     
     if intraday_hist[0]['open'] != 0:
@@ -222,6 +214,8 @@ def compile_api():
 
     with open(OUTPUT_FILE, "w") as f:
         json.dump(api_payload, f, indent=2)
+    
+    print(f"Engine Cycle Complete: {status_message}")
 
 if __name__ == "__main__":
     compile_api()
