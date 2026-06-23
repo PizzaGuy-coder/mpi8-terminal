@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-06-23 12:50:37 MMT"
+    "last_updated_mmt": "2026-06-23 13:00:42 MMT"
   },
   "index_metrics": {
-    "current_points": 1881.47,
-    "net_change": 20.47,
-    "percentage_change": "+1.1%",
+    "current_points": 1877.27,
+    "net_change": 16.27,
+    "percentage_change": "+0.87%",
     "daily_high": 1881.47,
     "daily_low": 1861.0
   },
@@ -42,6 +42,13 @@
       "high": 1881.49,
       "low": 1877.03,
       "close": 1881.47
+    },
+    {
+      "time": "2026-06-23 13:00",
+      "open": 1881.47,
+      "high": 1881.49,
+      "low": 1877.25,
+      "close": 1877.27
     }
   ],
   "daily_candle_history": [
@@ -1877,27 +1884,27 @@
       "open": 1872.68,
       "high": 1881.47,
       "low": 1861.0,
-      "close": 1881.47
+      "close": 1877.27
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 19200.0,
-      "weight_percent": 42.88,
-      "change": 0.0
+      "price": 19100.0,
+      "weight_percent": 42.75,
+      "change": -100.0
     },
     {
       "ticker": "MTSH",
       "price": 10100.0,
-      "weight_percent": 32.39,
-      "change": 100.0
+      "weight_percent": 32.46,
+      "change": 0.0
     },
     {
       "ticker": "MCB",
       "price": 7900.0,
-      "weight_percent": 6.77,
-      "change": -100.0
+      "weight_percent": 6.78,
+      "change": 0.0
     },
     {
       "ticker": "FPB",
@@ -1908,25 +1915,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.41,
+      "weight_percent": 2.42,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.63,
+      "weight_percent": 7.65,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.95,
+      "weight_percent": 3.96,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.64,
+      "weight_percent": 3.65,
       "change": 0.0
     }
   ]
