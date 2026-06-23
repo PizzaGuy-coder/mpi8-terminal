@@ -95,7 +95,6 @@
 <script>
     const GITHUB_USER = 'PizzaGuy-coder';
     const REPO_NAME = 'mpi8-terminal';
-    // FIXED: Changed CDN to raw GitHub link to instantly clear engine update caches
     const API_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/api.json`;
     
     let globalApiData = null; 
@@ -112,11 +111,26 @@
     });
     window.addEventListener('resize', () => chart.resize(chartContainer.clientWidth, 400));
 
+    // FIXED: Formatter component array to guarantee errorless date generation across global locales
+    function getMyanmarTime() {
+        try {
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Yangon',
+                year: 'numeric', month: 'numeric', day: 'numeric',
+                hour: 'numeric', minute: 'numeric', second: 'numeric',
+                hour12: false
+            }).formatToParts(new Date());
+            const p = {};
+            parts.forEach(part => p[part.type] = part.value);
+            return new Date(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+        } catch (e) {
+            return new Date(); 
+        }
+    }
+
     // --- LIVE COUNTDOWN TIMER ---
     function updateCountdown() {
-        // FIXED: Switched to robust internationalization parameters to lock calculations strictly onto Asia/Yangon time context
-        const mmtString = new Date().toLocaleString("en-US", { timeZone: "Asia/Yangon" });
-        const mmt = new Date(mmtString);
+        const mmt = getMyanmarTime();
 
         let target = new Date(mmt);
         target.setSeconds(0);
@@ -160,8 +174,7 @@
 
     // --- MARKET STATUS ENGINE ---
     function updateMarketStatusUI() {
-        const mmtString = new Date().toLocaleString("en-US", { timeZone: "Asia/Yangon" });
-        const mmt = new Date(mmtString);
+        const mmt = getMyanmarTime();
         
         const day = mmt.getDay();
         const totalMinutes = mmt.getHours() * 60 + mmt.getMinutes();
@@ -241,7 +254,6 @@
             if (daysToKeep > 0) source = source.slice(-daysToKeep);
 
             finalData = source.map(day => {
-                // FIXED: Convert YYYY-MM-DD strings into UNIX timestamps to protect chart compilation from throwing data type collision errors
                 const ts = (new Date(day.date + "T00:00:00+06:30").getTime()) / 1000;
                 if (currentChartType === 'line') {
                     return { time: ts, value: day.close };
@@ -251,7 +263,6 @@
             });
         }
 
-        // Sort data chronologically to fulfill Lightweight Charts ordering standards
         finalData.sort((a, b) => a.time - b.time);
 
         if (finalData.length > 0) {
@@ -273,7 +284,6 @@
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
             const data = await response.json();
             
-            // Check for valid payload structure to defend against empty JSON files
             if (!data || !data.system_metadata) {
                 throw new Error("Target file payload appears uninitialized.");
             }
