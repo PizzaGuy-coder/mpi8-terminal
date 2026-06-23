@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-23 10:00:43 MMT"
+    "last_updated_mmt": "2026-06-23 10:10:36 MMT"
   },
   "index_metrics": {
-    "current_points": 1846.69,
-    "net_change": -4.2,
-    "percentage_change": "-0.23%",
+    "current_points": 1842.49,
+    "net_change": -8.4,
+    "percentage_change": "-0.45%",
     "daily_high": 1850.89,
     "daily_low": 1668.91
   },
@@ -28,6 +28,13 @@
       "high": 1850.91,
       "low": 1846.67,
       "close": 1846.69
+    },
+    {
+      "time": "2026-06-23 10:10",
+      "open": 1846.69,
+      "high": 1846.71,
+      "low": 1842.47,
+      "close": 1842.49
     }
   ],
   "daily_candle_history": [
@@ -1863,26 +1870,26 @@
       "open": 1668.91,
       "high": 1850.89,
       "low": 1668.91,
-      "close": 1846.69
+      "close": 1842.49
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 18700.0,
-      "weight_percent": 42.55,
+      "price": 18600.0,
+      "weight_percent": 42.42,
       "change": -100.0
     },
     {
       "ticker": "MTSH",
       "price": 9800.0,
-      "weight_percent": 32.02,
+      "weight_percent": 32.09,
       "change": 0.0
     },
     {
       "ticker": "MCB",
       "price": 7700.0,
-      "weight_percent": 6.72,
+      "weight_percent": 6.74,
       "change": 0.0
     },
     {
@@ -1894,25 +1901,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.46,
+      "weight_percent": 2.47,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 2000.0,
-      "weight_percent": 8.18,
+      "weight_percent": 8.2,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 4.03,
+      "weight_percent": 4.04,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.71,
+      "weight_percent": 3.72,
       "change": 0.0
     }
   ]
