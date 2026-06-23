@@ -111,7 +111,6 @@
     });
     window.addEventListener('resize', () => chart.resize(chartContainer.clientWidth, 400));
 
-    // FIXED: Formatter component array to guarantee errorless date generation across global locales
     function getMyanmarTime() {
         try {
             const parts = new Intl.DateTimeFormat('en-US', {
@@ -128,7 +127,6 @@
         }
     }
 
-    // --- LIVE COUNTDOWN TIMER ---
     function updateCountdown() {
         const mmt = getMyanmarTime();
 
@@ -172,7 +170,6 @@
         if (timerEl) timerEl.textContent = timerText;
     }
 
-    // --- MARKET STATUS ENGINE ---
     function updateMarketStatusUI() {
         const mmt = getMyanmarTime();
         
@@ -236,7 +233,7 @@
         if (currentTimeframe === '1D') {
             const source = globalApiData.intraday_history || [];
             finalData = source.map(tick => {
-                const ts = (new Date(tick.time.replace(" ", "T") + "+06:30").getTime()) / 1000;
+                const ts = (new Date(tick.time.replace(" ", "T") + ":00+06:30").getTime()) / 1000;
                 if (currentChartType === 'line') {
                     return { time: ts, value: tick.close };
                 } else {
@@ -254,16 +251,18 @@
             if (daysToKeep > 0) source = source.slice(-daysToKeep);
 
             finalData = source.map(day => {
-                const ts = (new Date(day.date + "T00:00:00+06:30").getTime()) / 1000;
                 if (currentChartType === 'line') {
-                    return { time: ts, value: day.close };
+                    return { time: day.date, value: day.close };
                 } else {
-                    return { time: ts, open: day.open, high: day.high, low: day.low, close: day.close };
+                    return { time: day.date, open: day.open, high: day.high, low: day.low, close: day.close };
                 }
             });
         }
 
-        finalData.sort((a, b) => a.time - b.time);
+        finalData.sort((a, b) => {
+            if (typeof a.time === 'string') return a.time.localeCompare(b.time);
+            return a.time - b.time;
+        });
 
         if (finalData.length > 0) {
             currentSeries.setData(finalData);
@@ -313,7 +312,7 @@
                         <td style="font-weight: bold; color: #ffffff;">${stock.ticker}</td>
                         <td>${stock.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                         <td>${stock.weight_percent.toFixed(2)}%</td>
-                        <td class="${stock.change >= 0 ? 'green' : 'red'}">${stock.change >= 0 ? '📈' : '🔻'} ${stock.change.toFixed(2)}</td>
+                        <td class="${stock.change >= 0 ? 'green' : 'red'}">${stock.change >= 0 ? '📈' : '🔻'} ${Math.abs(stock.change).toFixed(2)}</td>
                     `;
                     tableBody.appendChild(row);
                 });
@@ -325,7 +324,6 @@
         }
     }
 
-    // --- INITIALIZATION ---
     updateCountdown(); 
     setInterval(updateCountdown, 1000); 
     
