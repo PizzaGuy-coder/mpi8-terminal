@@ -17,7 +17,8 @@ from bs4 import BeautifulSoup
 # --- CONFIGURATION ---
 YSX_URL = "https://ysx-mm.com/"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-MAX_INTRADAY_POINTS = 50
+# FIXED: Expanded to capture a full 4-hour market session (240 mins) safely
+MAX_INTRADAY_POINTS = 300 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "api.json")
@@ -30,7 +31,6 @@ CONSTITUENT_SHARES = {
 
 INDEX_BASE_DIVISOR = 645241392.0 
 
-# FIXED: Updated to realistic mid-2026 YSX market baselines
 BASELINE_PRICES = {
     "FMI": 19000.0, "MTSH": 9800.0, "MCB": 7800.0, "FPB": 1600.0,
     "TMH": 2400.0, "EFR": 1950.0, "AMATA": 4800.0, "MAEX": 1800.0
@@ -81,14 +81,12 @@ def load_existing_state():
     return [], [], {}
 
 def generate_historical_backfill(base_points):
-    """Generates 365 days of fake past market data so timeframe UI buttons work instantly."""
     history = []
     mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
-    current_sim_points = base_points * 0.85 # Start 15% lower a year ago
+    current_sim_points = base_points * 0.85 
 
     for i in range(365, 0, -1):
         date_str = (mmt_now - timedelta(days=i)).strftime("%Y-%m-%d")
-        # Ensure weekdays only for realistic market data
         date_obj = mmt_now - timedelta(days=i)
         if date_obj.weekday() >= 5: continue 
         
@@ -129,7 +127,6 @@ def compile_api():
     if not scraped_prices:
         is_simulated = True
         for t, p in final_prices.items():
-            # FIXED: Apply YSX Tick Rules - Snap simulation to clean 100 Kyat integer increments
             raw_price = p * (1 + random.uniform(-0.01, 0.01))
             final_prices[t] = float(round(raw_price / 100) * 100)
         data_source = "Cloud Simulation Engine" if last_known_prices else "Baseline Initialization"
@@ -142,7 +139,6 @@ def compile_api():
     constituents_payload = []
     for ticker, price in final_prices.items():
         weight = round(((price * CONSTITUENT_SHARES[ticker]) / total_market_cap) * 100, 2)
-        # Prevent zero-division crash if last known price is missing
         old_price = last_known_prices.get(ticker, price)
         price_change = price - old_price
         
@@ -154,6 +150,12 @@ def compile_api():
     mmt_now = datetime.now(timezone.utc) + timedelta(hours=6, minutes=30)
     current_date_str = mmt_now.strftime("%Y-%m-%d")
     current_time_str = mmt_now.strftime("%Y-%m-%d %H:%M")
+
+    # FIXED: Clear out yesterday's intraday data when a new session opens
+    if intraday_hist:
+        last_tick_date = intraday_hist[-1]["time"].split(" ")[0]
+        if last_tick_date != current_date_str:
+            intraday_hist = []
 
     # Intraday Candle Management
     intra_open = intraday_hist[-1]["close"] if intraday_hist else index_points
@@ -170,7 +172,6 @@ def compile_api():
         intraday_hist.append(new_intra)
     if len(intraday_hist) > MAX_INTRADAY_POINTS: intraday_hist = intraday_hist[-MAX_INTRADAY_POINTS:]
 
-    # FIXED: Backfill historical data if starting fresh so UI buttons work immediately
     if not daily_hist:
         daily_hist = generate_historical_backfill(index_points)
 
@@ -180,7 +181,6 @@ def compile_api():
         daily_hist[-1]["low"] = round(min(daily_hist[-1]["low"], index_points), 2)
         daily_hist[-1]["close"] = round(index_points, 2)
     else:
-        # Carry over yesterday's close as today's open to prevent gaps
         daily_open = daily_hist[-1]["close"] if daily_hist else index_points
         daily_hist.append({"date": current_date_str, "open": daily_open, "high": max(daily_open, index_points), "low": min(daily_open, index_points), "close": index_points})
 
@@ -199,7 +199,6 @@ def compile_api():
     else:
         market_sentiment = "Neutral ⚖️"
 
-    # --- API COMPILATION ---
     api_payload = {
         "system_metadata": {
             "index_ticker": "MPI 8", 
