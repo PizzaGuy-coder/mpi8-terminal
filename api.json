@@ -5,7 +5,7 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Neutral \u2696\ufe0f",
-    "last_updated_mmt": "2026-06-24 12:40:34 MMT"
+    "last_updated_mmt": "2026-06-24 12:50:35 MMT"
   },
   "index_metrics": {
     "current_points": 1885.13,
@@ -159,6 +159,13 @@
       "time": "2026-06-24 12:40",
       "open": 1891.16,
       "high": 1891.18,
+      "low": 1885.11,
+      "close": 1885.13
+    },
+    {
+      "time": "2026-06-24 12:50",
+      "open": 1885.13,
+      "high": 1885.15,
       "low": 1885.11,
       "close": 1885.13
     }
@@ -2017,7 +2024,7 @@
       "ticker": "MTSH",
       "price": 10300.0,
       "weight_percent": 32.96,
-      "change": -100.0
+      "change": 0.0
     },
     {
       "ticker": "MCB",
