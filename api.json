@@ -2,10 +2,10 @@
   "system_metadata": {
     "index_ticker": "MPI 8",
     "index_name": "Myanmar's Public Index 8",
-    "data_source": "Cloud Simulation Engine",
-    "market_status": "Market Open (Live Trading)",
+    "data_source": "Static Last Close",
+    "market_status": "Market Closed (Outside Hours)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-24 13:20:38 MMT"
+    "last_updated_mmt": "2026-06-24 13:30:52 MMT"
   },
   "index_metrics": {
     "current_points": 1878.34,
@@ -2039,13 +2039,13 @@
       "ticker": "FMI",
       "price": 18800.0,
       "weight_percent": 42.06,
-      "change": -100.0
+      "change": 0.0
     },
     {
       "ticker": "MTSH",
       "price": 10300.0,
       "weight_percent": 33.08,
-      "change": -100.0
+      "change": 0.0
     },
     {
       "ticker": "MCB",
