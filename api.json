@@ -4,14 +4,14 @@
     "index_name": "Myanmar's Public Index 8",
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
-    "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-25 12:50:32 MMT"
+    "market_sentiment": "Bullish \ud83d\udcc8",
+    "last_updated_mmt": "2026-06-25 13:00:39 MMT"
   },
   "index_metrics": {
-    "current_points": 1875.43,
-    "net_change": -2.91,
-    "percentage_change": "-0.15%",
-    "daily_high": 1878.34,
+    "current_points": 1879.42,
+    "net_change": 1.08,
+    "percentage_change": "+0.06%",
+    "daily_high": 1879.42,
     "daily_low": 1855.18
   },
   "intraday_history": [
@@ -168,6 +168,13 @@
       "high": 1875.45,
       "low": 1865.18,
       "close": 1875.43
+    },
+    {
+      "time": "2026-06-25 13:00",
+      "open": 1875.43,
+      "high": 1879.44,
+      "low": 1875.41,
+      "close": 1879.42
     }
   ],
   "daily_candle_history": [
@@ -2015,29 +2022,29 @@
     {
       "date": "2026-06-25",
       "open": 1878.34,
-      "high": 1878.34,
+      "high": 1879.42,
       "low": 1855.18,
-      "close": 1875.43
+      "close": 1879.42
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 19200.0,
-      "weight_percent": 43.02,
-      "change": 100.0
+      "price": 19400.0,
+      "weight_percent": 43.37,
+      "change": 200.0
     },
     {
       "ticker": "MTSH",
-      "price": 10000.0,
-      "weight_percent": 32.17,
-      "change": 100.0
+      "price": 9900.0,
+      "weight_percent": 31.78,
+      "change": -100.0
     },
     {
       "ticker": "MCB",
-      "price": 7900.0,
-      "weight_percent": 6.79,
-      "change": 0.0
+      "price": 8000.0,
+      "weight_percent": 6.86,
+      "change": 100.0
     },
     {
       "ticker": "FPB",
@@ -2054,13 +2061,13 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.65,
+      "weight_percent": 7.64,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.97,
+      "weight_percent": 3.96,
       "change": 0.0
     },
     {
