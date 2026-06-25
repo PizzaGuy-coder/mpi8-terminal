@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-25 11:50:32 MMT"
+    "last_updated_mmt": "2026-06-25 12:00:41 MMT"
   },
   "index_metrics": {
-    "current_points": 1871.45,
-    "net_change": -6.89,
-    "percentage_change": "-0.37%",
+    "current_points": 1869.62,
+    "net_change": -8.72,
+    "percentage_change": "-0.46%",
     "daily_high": 1878.34,
     "daily_low": 1858.85
   },
@@ -126,6 +126,13 @@
       "high": 1871.47,
       "low": 1869.82,
       "close": 1871.45
+    },
+    {
+      "time": "2026-06-25 12:00",
+      "open": 1871.45,
+      "high": 1871.47,
+      "low": 1869.6,
+      "close": 1869.62
     }
   ],
   "daily_candle_history": [
@@ -1975,27 +1982,27 @@
       "open": 1878.34,
       "high": 1878.34,
       "low": 1858.85,
-      "close": 1871.45
+      "close": 1869.62
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 19000.0,
-      "weight_percent": 42.66,
-      "change": 0.0
+      "price": 19100.0,
+      "weight_percent": 42.93,
+      "change": 100.0
     },
     {
       "ticker": "MTSH",
-      "price": 10100.0,
-      "weight_percent": 32.56,
-      "change": 0.0
+      "price": 10000.0,
+      "weight_percent": 32.27,
+      "change": -100.0
     },
     {
       "ticker": "MCB",
       "price": 7800.0,
-      "weight_percent": 6.72,
-      "change": 100.0
+      "weight_percent": 6.73,
+      "change": 0.0
     },
     {
       "ticker": "FPB",
@@ -2012,7 +2019,7 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.67,
+      "weight_percent": 7.68,
       "change": 0.0
     },
     {
