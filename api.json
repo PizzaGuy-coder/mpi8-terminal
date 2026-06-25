@@ -5,7 +5,7 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-25 12:10:33 MMT"
+    "last_updated_mmt": "2026-06-25 12:20:33 MMT"
   },
   "index_metrics": {
     "current_points": 1855.18,
@@ -138,6 +138,13 @@
       "time": "2026-06-25 12:10",
       "open": 1869.62,
       "high": 1869.64,
+      "low": 1855.16,
+      "close": 1855.18
+    },
+    {
+      "time": "2026-06-25 12:20",
+      "open": 1855.18,
+      "high": 1855.2,
       "low": 1855.16,
       "close": 1855.18
     }
@@ -1997,13 +2004,13 @@
       "ticker": "FMI",
       "price": 18900.0,
       "weight_percent": 42.81,
-      "change": -200.0
+      "change": 0.0
     },
     {
       "ticker": "MTSH",
       "price": 9900.0,
       "weight_percent": 32.2,
-      "change": -100.0
+      "change": 0.0
     },
     {
       "ticker": "MCB",
