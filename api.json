@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-25 12:40:34 MMT"
+    "last_updated_mmt": "2026-06-25 12:50:32 MMT"
   },
   "index_metrics": {
-    "current_points": 1865.2,
-    "net_change": -13.14,
-    "percentage_change": "-0.7%",
+    "current_points": 1875.43,
+    "net_change": -2.91,
+    "percentage_change": "-0.15%",
     "daily_high": 1878.34,
     "daily_low": 1855.18
   },
@@ -161,6 +161,13 @@
       "high": 1865.22,
       "low": 1865.18,
       "close": 1865.2
+    },
+    {
+      "time": "2026-06-25 12:50",
+      "open": 1865.2,
+      "high": 1875.45,
+      "low": 1865.18,
+      "close": 1875.43
     }
   ],
   "daily_candle_history": [
@@ -2010,26 +2017,26 @@
       "open": 1878.34,
       "high": 1878.34,
       "low": 1855.18,
-      "close": 1865.2
+      "close": 1875.43
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 19100.0,
-      "weight_percent": 43.03,
-      "change": 0.0
+      "price": 19200.0,
+      "weight_percent": 43.02,
+      "change": 100.0
     },
     {
       "ticker": "MTSH",
-      "price": 9900.0,
-      "weight_percent": 32.02,
-      "change": 0.0
+      "price": 10000.0,
+      "weight_percent": 32.17,
+      "change": 100.0
     },
     {
       "ticker": "MCB",
       "price": 7900.0,
-      "weight_percent": 6.83,
+      "weight_percent": 6.79,
       "change": 0.0
     },
     {
@@ -2041,25 +2048,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.44,
+      "weight_percent": 2.42,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.69,
+      "weight_percent": 7.65,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.99,
+      "weight_percent": 3.97,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.67,
+      "weight_percent": 3.65,
       "change": 0.0
     }
   ]
