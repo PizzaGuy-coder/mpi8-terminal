@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-25 10:40:36 MMT"
+    "last_updated_mmt": "2026-06-25 10:50:35 MMT"
   },
   "index_metrics": {
-    "current_points": 1870.91,
-    "net_change": -7.43,
-    "percentage_change": "-0.4%",
+    "current_points": 1864.88,
+    "net_change": -13.46,
+    "percentage_change": "-0.72%",
     "daily_high": 1878.34,
     "daily_low": 1862.29
   },
@@ -77,6 +77,13 @@
       "high": 1870.93,
       "low": 1866.69,
       "close": 1870.91
+    },
+    {
+      "time": "2026-06-25 10:50",
+      "open": 1870.91,
+      "high": 1870.93,
+      "low": 1864.86,
+      "close": 1864.88
     }
   ],
   "daily_candle_history": [
@@ -1926,26 +1933,26 @@
       "open": 1878.34,
       "high": 1878.34,
       "low": 1862.29,
-      "close": 1870.91
+      "close": 1864.88
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
       "price": 18700.0,
-      "weight_percent": 42.0,
-      "change": 100.0
+      "weight_percent": 42.13,
+      "change": 0.0
     },
     {
       "ticker": "MTSH",
-      "price": 10300.0,
-      "weight_percent": 33.22,
-      "change": 0.0
+      "price": 10200.0,
+      "weight_percent": 33.0,
+      "change": -100.0
     },
     {
       "ticker": "MCB",
       "price": 7800.0,
-      "weight_percent": 6.72,
+      "weight_percent": 6.74,
       "change": 0.0
     },
     {
@@ -1957,25 +1964,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.43,
+      "weight_percent": 2.44,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.67,
+      "weight_percent": 7.7,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.98,
+      "weight_percent": 3.99,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.66,
+      "weight_percent": 3.67,
       "change": 0.0
     }
   ]
