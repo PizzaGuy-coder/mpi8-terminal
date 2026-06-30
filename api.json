@@ -5,14 +5,14 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-06-30 13:00:39 MMT"
+    "last_updated_mmt": "2026-06-30 13:10:32 MMT"
   },
   "index_metrics": {
-    "current_points": 1865.07,
-    "net_change": -24.68,
-    "percentage_change": "-1.31%",
+    "current_points": 1862.48,
+    "net_change": -27.27,
+    "percentage_change": "-1.44%",
     "daily_high": 1924.97,
-    "daily_low": 1865.07
+    "daily_low": 1862.48
   },
   "intraday_history": [
     {
@@ -175,6 +175,13 @@
       "high": 1879.53,
       "low": 1865.05,
       "close": 1865.07
+    },
+    {
+      "time": "2026-06-30 13:10",
+      "open": 1865.07,
+      "high": 1865.09,
+      "low": 1862.46,
+      "close": 1862.48
     }
   ],
   "daily_candle_history": [
@@ -2044,28 +2051,28 @@
       "date": "2026-06-30",
       "open": 1889.75,
       "high": 1924.97,
-      "low": 1865.07,
-      "close": 1865.07
+      "low": 1862.48,
+      "close": 1862.48
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 18800.0,
-      "weight_percent": 42.36,
-      "change": -200.0
+      "price": 18700.0,
+      "weight_percent": 42.19,
+      "change": -100.0
     },
     {
       "ticker": "MTSH",
       "price": 10000.0,
-      "weight_percent": 32.35,
-      "change": -100.0
+      "weight_percent": 32.39,
+      "change": 0.0
     },
     {
       "ticker": "MCB",
-      "price": 8300.0,
-      "weight_percent": 7.17,
-      "change": 0.0
+      "price": 8400.0,
+      "weight_percent": 7.27,
+      "change": 100.0
     },
     {
       "ticker": "FPB",
@@ -2082,7 +2089,7 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.7,
+      "weight_percent": 7.71,
       "change": 0.0
     },
     {
@@ -2094,7 +2101,7 @@
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.67,
+      "weight_percent": 3.68,
       "change": 0.0
     }
   ]
