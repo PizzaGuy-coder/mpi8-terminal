@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-07-02 11:20:35 MMT"
+    "last_updated_mmt": "2026-07-02 11:30:44 MMT"
   },
   "index_metrics": {
-    "current_points": 1871.11,
-    "net_change": 29.31,
-    "percentage_change": "+1.59%",
+    "current_points": 1874.56,
+    "net_change": 32.76,
+    "percentage_change": "+1.78%",
     "daily_high": 1882.96,
     "daily_low": 1841.8
   },
@@ -105,6 +105,13 @@
       "high": 1872.75,
       "low": 1871.09,
       "close": 1871.11
+    },
+    {
+      "time": "2026-07-02 11:30",
+      "open": 1871.11,
+      "high": 1874.58,
+      "low": 1871.09,
+      "close": 1874.56
     }
   ],
   "daily_candle_history": [
@@ -1989,27 +1996,27 @@
       "open": 1841.8,
       "high": 1882.96,
       "low": 1841.8,
-      "close": 1871.11
+      "close": 1874.56
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 19700.0,
-      "weight_percent": 44.24,
-      "change": 0.0
+      "price": 19600.0,
+      "weight_percent": 43.93,
+      "change": -100.0
     },
     {
       "ticker": "MTSH",
-      "price": 9500.0,
-      "weight_percent": 30.63,
-      "change": 0.0
+      "price": 9600.0,
+      "weight_percent": 30.9,
+      "change": 100.0
     },
     {
       "ticker": "MCB",
-      "price": 8200.0,
-      "weight_percent": 7.06,
-      "change": -100.0
+      "price": 8300.0,
+      "weight_percent": 7.14,
+      "change": 100.0
     },
     {
       "ticker": "FPB",
@@ -2020,19 +2027,19 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.43,
+      "weight_percent": 2.42,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.67,
+      "weight_percent": 7.66,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.98,
+      "weight_percent": 3.97,
       "change": 0.0
     },
     {
