@@ -5,13 +5,13 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-07-02 09:30:47 MMT"
+    "last_updated_mmt": "2026-07-02 09:40:33 MMT"
   },
   "index_metrics": {
-    "current_points": 1854.63,
-    "net_change": 12.83,
-    "percentage_change": "+0.7%",
-    "daily_high": 1854.63,
+    "current_points": 1860.66,
+    "net_change": 18.86,
+    "percentage_change": "+1.02%",
+    "daily_high": 1860.66,
     "daily_low": 1841.8
   },
   "intraday_history": [
@@ -28,6 +28,13 @@
       "high": 1854.65,
       "low": 1841.78,
       "close": 1854.63
+    },
+    {
+      "time": "2026-07-02 09:40",
+      "open": 1854.63,
+      "high": 1860.68,
+      "low": 1854.61,
+      "close": 1860.66
     }
   ],
   "daily_candle_history": [
@@ -1910,29 +1917,29 @@
     {
       "date": "2026-07-02",
       "open": 1841.8,
-      "high": 1854.63,
+      "high": 1860.66,
       "low": 1841.8,
-      "close": 1854.63
+      "close": 1860.66
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
       "price": 19700.0,
-      "weight_percent": 44.63,
-      "change": 200.0
+      "weight_percent": 44.49,
+      "change": 0.0
     },
     {
       "ticker": "MTSH",
-      "price": 9200.0,
-      "weight_percent": 29.93,
+      "price": 9300.0,
+      "weight_percent": 30.16,
       "change": 100.0
     },
     {
       "ticker": "MCB",
       "price": 8300.0,
-      "weight_percent": 7.21,
-      "change": -100.0
+      "weight_percent": 7.19,
+      "change": 0.0
     },
     {
       "ticker": "FPB",
@@ -1943,25 +1950,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.45,
+      "weight_percent": 2.44,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.74,
+      "weight_percent": 7.71,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 4.01,
+      "weight_percent": 4.0,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.69,
+      "weight_percent": 3.68,
       "change": 0.0
     }
   ]
