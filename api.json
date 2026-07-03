@@ -5,13 +5,13 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-07-03 11:30:46 MMT"
+    "last_updated_mmt": "2026-07-03 11:40:33 MMT"
   },
   "index_metrics": {
-    "current_points": 1896.11,
-    "net_change": 20.26,
-    "percentage_change": "+1.08%",
-    "daily_high": 1896.11,
+    "current_points": 1900.09,
+    "net_change": 24.24,
+    "percentage_change": "+1.29%",
+    "daily_high": 1900.09,
     "daily_low": 1864.86
   },
   "intraday_history": [
@@ -112,6 +112,13 @@
       "high": 1896.13,
       "low": 1887.46,
       "close": 1896.11
+    },
+    {
+      "time": "2026-07-03 11:40",
+      "open": 1896.11,
+      "high": 1900.11,
+      "low": 1896.09,
+      "close": 1900.09
     }
   ],
   "daily_candle_history": [
@@ -2001,29 +2008,29 @@
     {
       "date": "2026-07-03",
       "open": 1875.85,
-      "high": 1896.11,
+      "high": 1900.09,
       "low": 1864.86,
-      "close": 1896.11
+      "close": 1900.09
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 20400.0,
-      "weight_percent": 45.21,
-      "change": 100.0
+      "price": 20600.0,
+      "weight_percent": 45.56,
+      "change": 200.0
     },
     {
       "ticker": "MTSH",
-      "price": 9400.0,
-      "weight_percent": 29.91,
-      "change": 100.0
+      "price": 9300.0,
+      "weight_percent": 29.53,
+      "change": -100.0
     },
     {
       "ticker": "MCB",
-      "price": 8300.0,
-      "weight_percent": 7.06,
-      "change": -100.0
+      "price": 8400.0,
+      "weight_percent": 7.13,
+      "change": 100.0
     },
     {
       "ticker": "FPB",
@@ -2034,13 +2041,13 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.4,
+      "weight_percent": 2.39,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.57,
+      "weight_percent": 7.55,
       "change": 0.0
     },
     {
