@@ -5,7 +5,7 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-07-03 11:50:31 MMT"
+    "last_updated_mmt": "2026-07-03 12:00:39 MMT"
   },
   "index_metrics": {
     "current_points": 1898.48,
@@ -124,6 +124,13 @@
       "time": "2026-07-03 11:50",
       "open": 1900.09,
       "high": 1900.11,
+      "low": 1898.46,
+      "close": 1898.48
+    },
+    {
+      "time": "2026-07-03 12:00",
+      "open": 1898.48,
+      "high": 1898.5,
       "low": 1898.46,
       "close": 1898.48
     }
@@ -2037,7 +2044,7 @@
       "ticker": "MCB",
       "price": 8300.0,
       "weight_percent": 7.05,
-      "change": -100.0
+      "change": 0.0
     },
     {
       "ticker": "FPB",
