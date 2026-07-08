@@ -5,14 +5,14 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-07-08 12:20:39 MMT"
+    "last_updated_mmt": "2026-07-08 12:30:48 MMT"
   },
   "index_metrics": {
-    "current_points": 1917.9,
-    "net_change": -13.65,
-    "percentage_change": "-0.71%",
+    "current_points": 1915.53,
+    "net_change": -16.02,
+    "percentage_change": "-0.83%",
     "daily_high": 1938.34,
-    "daily_low": 1917.9
+    "daily_low": 1915.53
   },
   "intraday_history": [
     {
@@ -147,6 +147,13 @@
       "high": 1923.73,
       "low": 1917.88,
       "close": 1917.9
+    },
+    {
+      "time": "2026-07-08 12:30",
+      "open": 1917.9,
+      "high": 1917.92,
+      "low": 1915.51,
+      "close": 1915.53
     }
   ],
   "daily_candle_history": [
@@ -2058,28 +2065,28 @@
       "date": "2026-07-08",
       "open": 1931.55,
       "high": 1938.34,
-      "low": 1917.9,
-      "close": 1917.9
+      "low": 1915.53,
+      "close": 1915.53
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 20900.0,
-      "weight_percent": 45.79,
-      "change": -100.0
+      "price": 20700.0,
+      "weight_percent": 45.41,
+      "change": -200.0
     },
     {
       "ticker": "MTSH",
-      "price": 9600.0,
-      "weight_percent": 30.2,
-      "change": 0.0
+      "price": 9700.0,
+      "weight_percent": 30.55,
+      "change": 100.0
     },
     {
       "ticker": "MCB",
       "price": 7600.0,
-      "weight_percent": 6.39,
-      "change": -100.0
+      "weight_percent": 6.4,
+      "change": 0.0
     },
     {
       "ticker": "FPB",
@@ -2096,7 +2103,7 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.48,
+      "weight_percent": 7.49,
       "change": 0.0
     },
     {
@@ -2108,7 +2115,7 @@
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.57,
+      "weight_percent": 3.58,
       "change": 0.0
     }
   ]
