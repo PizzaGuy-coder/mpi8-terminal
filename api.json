@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-07-08 12:50:36 MMT"
+    "last_updated_mmt": "2026-07-08 13:00:41 MMT"
   },
   "index_metrics": {
-    "current_points": 1915.53,
-    "net_change": -16.02,
-    "percentage_change": "-0.83%",
+    "current_points": 1925.76,
+    "net_change": -5.79,
+    "percentage_change": "-0.3%",
     "daily_high": 1938.34,
     "daily_low": 1915.53
   },
@@ -168,6 +168,13 @@
       "high": 1915.55,
       "low": 1915.51,
       "close": 1915.53
+    },
+    {
+      "time": "2026-07-08 13:00",
+      "open": 1915.53,
+      "high": 1925.78,
+      "low": 1915.51,
+      "close": 1925.76
     }
   ],
   "daily_candle_history": [
@@ -2080,26 +2087,26 @@
       "open": 1931.55,
       "high": 1938.34,
       "low": 1915.53,
-      "close": 1915.53
+      "close": 1925.76
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 20700.0,
-      "weight_percent": 45.41,
-      "change": 0.0
+      "price": 20800.0,
+      "weight_percent": 45.38,
+      "change": 100.0
     },
     {
       "ticker": "MTSH",
-      "price": 9700.0,
-      "weight_percent": 30.55,
-      "change": 0.0
+      "price": 9800.0,
+      "weight_percent": 30.7,
+      "change": 100.0
     },
     {
       "ticker": "MCB",
       "price": 7600.0,
-      "weight_percent": 6.4,
+      "weight_percent": 6.36,
       "change": 0.0
     },
     {
@@ -2111,25 +2118,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.37,
+      "weight_percent": 2.36,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.49,
+      "weight_percent": 7.45,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.88,
+      "weight_percent": 3.86,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.58,
+      "weight_percent": 3.56,
       "change": 0.0
     }
   ]
