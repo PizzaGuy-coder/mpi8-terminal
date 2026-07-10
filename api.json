@@ -4,14 +4,14 @@
     "index_name": "Myanmar's Public Index 8",
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
-    "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-07-10 11:30:48 MMT"
+    "market_sentiment": "Bullish \ud83d\udcc8",
+    "last_updated_mmt": "2026-07-10 11:40:33 MMT"
   },
   "index_metrics": {
-    "current_points": 1935.34,
-    "net_change": -0.85,
-    "percentage_change": "-0.04%",
-    "daily_high": 1936.19,
+    "current_points": 1937.17,
+    "net_change": 0.98,
+    "percentage_change": "+0.05%",
+    "daily_high": 1937.17,
     "daily_low": 1906.47
   },
   "intraday_history": [
@@ -112,6 +112,13 @@
       "high": 1935.36,
       "low": 1926.7,
       "close": 1935.34
+    },
+    {
+      "time": "2026-07-10 11:40",
+      "open": 1935.34,
+      "high": 1937.19,
+      "low": 1935.32,
+      "close": 1937.17
     }
   ],
   "daily_candle_history": [
@@ -2036,29 +2043,29 @@
     {
       "date": "2026-07-10",
       "open": 1936.19,
-      "high": 1936.19,
+      "high": 1937.17,
       "low": 1906.47,
-      "close": 1935.34
+      "close": 1937.17
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 21200.0,
-      "weight_percent": 46.03,
-      "change": 100.0
+      "price": 21100.0,
+      "weight_percent": 45.77,
+      "change": -100.0
     },
     {
       "ticker": "MTSH",
-      "price": 9600.0,
-      "weight_percent": 29.93,
+      "price": 9700.0,
+      "weight_percent": 30.21,
       "change": 100.0
     },
     {
       "ticker": "MCB",
       "price": 7900.0,
-      "weight_percent": 6.58,
-      "change": -100.0
+      "weight_percent": 6.57,
+      "change": 0.0
     },
     {
       "ticker": "FPB",
@@ -2075,7 +2082,7 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.42,
+      "weight_percent": 7.41,
       "change": 0.0
     },
     {
