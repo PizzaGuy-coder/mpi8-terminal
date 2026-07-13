@@ -5,7 +5,7 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bullish \ud83d\udcc8",
-    "last_updated_mmt": "2026-07-13 10:20:39 MMT"
+    "last_updated_mmt": "2026-07-13 10:30:52 MMT"
   },
   "index_metrics": {
     "current_points": 1961.84,
@@ -59,6 +59,13 @@
     },
     {
       "time": "2026-07-13 10:20",
+      "open": 1961.84,
+      "high": 1961.86,
+      "low": 1961.82,
+      "close": 1961.84
+    },
+    {
+      "time": "2026-07-13 10:30",
       "open": 1961.84,
       "high": 1961.86,
       "low": 1961.82,
