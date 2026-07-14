@@ -5,12 +5,12 @@
     "data_source": "Cloud Simulation Engine",
     "market_status": "Market Open (Live Trading)",
     "market_sentiment": "Bearish \ud83d\udcc9",
-    "last_updated_mmt": "2026-07-14 13:00:48 MMT"
+    "last_updated_mmt": "2026-07-14 13:10:44 MMT"
   },
   "index_metrics": {
-    "current_points": 1963.77,
-    "net_change": -13.68,
-    "percentage_change": "-0.69%",
+    "current_points": 1972.17,
+    "net_change": -5.28,
+    "percentage_change": "-0.27%",
     "daily_high": 1977.45,
     "daily_low": 1943.2
   },
@@ -175,6 +175,13 @@
       "high": 1963.79,
       "low": 1959.55,
       "close": 1963.77
+    },
+    {
+      "time": "2026-07-14 13:10",
+      "open": 1963.77,
+      "high": 1972.19,
+      "low": 1963.75,
+      "close": 1972.17
     }
   ],
   "daily_candle_history": [
@@ -2115,26 +2122,26 @@
       "open": 1977.45,
       "high": 1977.45,
       "low": 1943.2,
-      "close": 1963.77
+      "close": 1972.17
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 20900.0,
-      "weight_percent": 44.72,
-      "change": 100.0
+      "price": 21100.0,
+      "weight_percent": 44.96,
+      "change": 200.0
     },
     {
       "ticker": "MTSH",
       "price": 10200.0,
-      "weight_percent": 31.34,
+      "weight_percent": 31.2,
       "change": 0.0
     },
     {
       "ticker": "MCB",
       "price": 8200.0,
-      "weight_percent": 6.73,
+      "weight_percent": 6.7,
       "change": 0.0
     },
     {
@@ -2146,25 +2153,25 @@
     {
       "ticker": "TMH",
       "price": 2400.0,
-      "weight_percent": 2.31,
+      "weight_percent": 2.3,
       "change": 0.0
     },
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.31,
+      "weight_percent": 7.28,
       "change": 0.0
     },
     {
       "ticker": "AMATA",
       "price": 4800.0,
-      "weight_percent": 3.79,
+      "weight_percent": 3.77,
       "change": 0.0
     },
     {
       "ticker": "MAEX",
       "price": 1800.0,
-      "weight_percent": 3.49,
+      "weight_percent": 3.47,
       "change": 0.0
     }
   ]
