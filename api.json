@@ -2,16 +2,16 @@
   "system_metadata": {
     "index_ticker": "MPI 8",
     "index_name": "Myanmar's Public Index 8",
-    "data_source": "Static Last Close",
-    "market_status": "Market Closed (Outside Hours)",
-    "market_sentiment": "Neutral \u2696\ufe0f",
-    "last_updated_mmt": "2026-07-15 09:20:39 MMT"
+    "data_source": "Cloud Simulation Engine",
+    "market_status": "Market Open (Live Trading)",
+    "market_sentiment": "Bullish \ud83d\udcc8",
+    "last_updated_mmt": "2026-07-15 09:30:55 MMT"
   },
   "index_metrics": {
-    "current_points": 1972.17,
-    "net_change": 0.0,
-    "percentage_change": "0.0%",
-    "daily_high": 1972.17,
+    "current_points": 1972.93,
+    "net_change": 0.76,
+    "percentage_change": "+0.04%",
+    "daily_high": 1972.93,
     "daily_low": 1972.17
   },
   "intraday_history": [
@@ -21,6 +21,13 @@
       "high": 1972.17,
       "low": 1972.17,
       "close": 1972.17
+    },
+    {
+      "time": "2026-07-15 09:30",
+      "open": 1972.17,
+      "high": 1972.95,
+      "low": 1972.15,
+      "close": 1972.93
     }
   ],
   "daily_candle_history": [
@@ -1966,29 +1973,29 @@
     {
       "date": "2026-07-15",
       "open": 1972.17,
-      "high": 1972.17,
+      "high": 1972.93,
       "low": 1972.17,
-      "close": 1972.17
+      "close": 1972.93
     }
   ],
   "constituents": [
     {
       "ticker": "FMI",
-      "price": 21100.0,
-      "weight_percent": 44.96,
-      "change": 0.0
+      "price": 21300.0,
+      "weight_percent": 45.36,
+      "change": 200.0
     },
     {
       "ticker": "MTSH",
-      "price": 10200.0,
-      "weight_percent": 31.2,
-      "change": 0.0
+      "price": 10100.0,
+      "weight_percent": 30.89,
+      "change": -100.0
     },
     {
       "ticker": "MCB",
-      "price": 8200.0,
-      "weight_percent": 6.7,
-      "change": 0.0
+      "price": 8100.0,
+      "weight_percent": 6.62,
+      "change": -100.0
     },
     {
       "ticker": "FPB",
@@ -2005,7 +2012,7 @@
     {
       "ticker": "EFR",
       "price": 1900.0,
-      "weight_percent": 7.28,
+      "weight_percent": 7.27,
       "change": 0.0
     },
     {
